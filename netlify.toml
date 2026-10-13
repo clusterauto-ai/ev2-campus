@@ -1,0 +1,9 @@
+# Configuración para desplegar esta app Next.js en Netlify.
+# El runtime oficial de Next.js (v5) gestiona el directorio de
+# publicación por sí solo: no definir "publish" aquí.
+
+[build]
+  command = "npm run build"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

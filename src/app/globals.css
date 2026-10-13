@@ -1,0 +1,336 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   EV2 CAMPUS — sistema visual Kia CI 2.0
+   Paleta y tipografía del guideline oficial de la agencia
+   (Kia Guidelines_2026_.pdf → design/design-tokens.json):
+   azul noche Midnight Black, paneles glass teal, acentos cian.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Fondos: azul noche muestreado de los mockups. */
+  --ink-950: #010f1d;
+  --ink-900: #05141f; /* Kia Midnight Black oficial */
+  --ink-850: #032430;
+  --ink-800: #04303f;
+  --ink-700: #0a4254;
+
+  --line: rgba(0, 168, 252, 0.16);
+  --line-strong: rgba(0, 204, 252, 0.36);
+
+  /* Texto: Polar White y grises corporativos. */
+  --fg: #ffffff;
+  --fg-dim: #c7c8ca; /* Kia Light Gray */
+  --fg-mute: #7d97a6;
+
+  /* Azul de proceso: el CTA principal de los mockups. */
+  --accent: #00a8fc;
+  /* Cian brillante: selección y datos en foco. */
+  --accent-ice: #00ccfc;
+  /* Cian claro para cifras de ahorro (reemplaza el lima anterior). */
+  --accent-lime: #5fe1ff;
+
+  --glow: 0 0 0 1px rgba(0, 204, 252, 0.28), 0 0 60px -12px rgba(0, 168, 252, 0.55);
+}
+
+/*
+  La escala tipográfica completa cuelga de esta línea. En el tótem
+  (1920 px de alto) da ~22 px de base; en un celular baja a 15 px.
+  Todo lo demás se define en rem y escala solo.
+*/
+html {
+  font-size: clamp(15px, 1.05vh + 0.14vw, 30px);
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--ink-950);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  overscroll-behavior: none;
+}
+
+/* En un tótem no existe el mouse: nada de selección accidental,
+   nada de menú contextual, nada de resaltado azul al tocar. */
+.kiosk,
+.kiosk * {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.kiosk input,
+.kiosk textarea {
+  user-select: text;
+}
+
+::-webkit-scrollbar {
+  width: 0.35rem;
+  height: 0.35rem;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+}
+
+/* ── Foto de la pantalla de atracción ───────────────────────── */
+
+.attract-photo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.attract-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Horizontal (tótem del mockup): encuadre sobre los faros. */
+  object-position: center 62%;
+}
+
+.attract-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(1, 15, 29, 0.15) 0%,
+    rgba(1, 15, 29, 0.3) 45%,
+    rgba(1, 15, 29, 0.8) 78%,
+    rgba(1, 15, 29, 0.96) 100%
+  );
+}
+
+@media (orientation: portrait) {
+  /* En vertical la foto 16:9 se ve completa (faros incluidos) y su
+     borde inferior se funde con el azul noche del resto de pantalla. */
+  .attract-photo img {
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-position: center;
+  }
+
+  .attract-photo::after {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(1, 15, 29, 0.05) 0%,
+        rgba(1, 15, 29, 0.12) 30vw,
+        rgba(1, 15, 29, 0.85) 52vw,
+        #010f1d 58vw,
+        rgba(1, 15, 29, 0.94) 100%
+      );
+  }
+}
+
+/* ── Fondo ambiental ────────────────────────────────────────── */
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient::after {
+  /* Grano sutil: le quita el aspecto plano y digital al negro. */
+  content: "";
+  position: absolute;
+  inset: -50%;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(90px);
+  will-change: transform;
+}
+
+/* ── Superficies ────────────────────────────────────────────── */
+
+.panel {
+  /* Glass teal de los mockups: fill #044154 translúcido + borde cian. */
+  background: linear-gradient(
+    160deg,
+    rgba(6, 74, 96, 0.5) 0%,
+    rgba(4, 54, 72, 0.34) 45%,
+    rgba(2, 32, 46, 0.28) 100%
+  );
+  border: 1px solid rgba(0, 168, 252, 0.28);
+  border-radius: 1.4rem;
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow:
+    0 1px 0 0 rgba(95, 225, 255, 0.14) inset,
+    0 0 34px -14px rgba(0, 168, 252, 0.4),
+    0 24px 60px -30px rgba(0, 0, 0, 0.9);
+}
+
+.panel-solid {
+  background: rgba(3, 36, 48, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+}
+
+/* ── Tipografía ─────────────────────────────────────────────── */
+
+.display {
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+}
+
+/* Cifras: tabulares para que no bailen al animarse. */
+.numeric {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.text-gradient {
+  background: linear-gradient(100deg, var(--fg) 15%, #9fe9ff 60%, var(--accent-ice) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Botones ────────────────────────────────────────────────── */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition:
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease,
+    background-color 0.22s ease,
+    opacity 0.22s ease;
+  touch-action: manipulation;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.965);
+}
+
+.btn:disabled {
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.btn-primary {
+  /* Pill "Continuar" de los mockups: glass cian con borde brillante. */
+  background: linear-gradient(160deg, rgba(0, 168, 252, 0.34), rgba(1, 84, 107, 0.55));
+  color: var(--fg);
+  border: 1px solid rgba(0, 204, 252, 0.55);
+  box-shadow:
+    0 0 0 1px rgba(0, 204, 252, 0.12) inset,
+    0 18px 45px -16px rgba(0, 168, 252, 0.75);
+}
+
+.btn-ghost {
+  background: rgba(4, 48, 63, 0.45);
+  color: var(--fg);
+  border: 1px solid var(--line-strong);
+}
+
+/* ── Controles de selección ─────────────────────────────────── */
+
+.chip {
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 168, 252, 0.2);
+  background: rgba(4, 48, 63, 0.4);
+  color: var(--fg-dim);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  touch-action: manipulation;
+}
+
+.chip:active {
+  transform: scale(0.96);
+}
+
+.chip[data-selected="true"] {
+  border-color: rgba(0, 204, 252, 0.85);
+  background: rgba(0, 168, 252, 0.16);
+  color: var(--fg);
+  box-shadow:
+    0 0 0 1px rgba(0, 204, 252, 0.35) inset,
+    0 0 32px -10px rgba(0, 204, 252, 0.85);
+}
+
+/* ── Campos de texto ────────────────────────────────────────── */
+
+.field {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 168, 252, 0.22);
+  background: rgba(4, 48, 63, 0.4);
+  color: var(--fg);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.field::placeholder {
+  color: var(--fg-mute);
+}
+
+.field:focus {
+  outline: none;
+  border-color: rgba(0, 204, 252, 0.65);
+  background: rgba(0, 168, 252, 0.08);
+  box-shadow: 0 0 0 4px rgba(0, 168, 252, 0.14);
+}
+
+.field[aria-invalid="true"] {
+  border-color: rgba(255, 149, 120, 0.65);
+  background: rgba(255, 149, 120, 0.07);
+}
+
+/* ── Accesibilidad ──────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

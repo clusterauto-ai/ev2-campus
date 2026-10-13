@@ -1,0 +1,126 @@
+{
+  "$meta": {
+    "source": "Kia Guidelines_2026_.pdf (13 pág., agencia, recibido 2026-09-08)",
+    "extractedBy": "análisis automático de páginas, imágenes embebidas y fuentes del PDF",
+    "note": "Los mockups (pág. 10-12) traen la UI quemada en la imagen; los colores de UI se muestrearon de ahí. La paleta corporativa sale de la pág. 4 (valores oficiales Kia CI 2.0)."
+  },
+
+  "brand": {
+    "corporate": {
+      "midnightBlack": { "hex": "#05141F", "pantone": "7547 C", "role": "color primario / fondo base" },
+      "polarWhite": { "hex": "#FFFFFF", "role": "color primario / texto principal" },
+      "darkGray": { "hex": "#6D6E71", "role": "gris K70" },
+      "mediumGray": { "hex": "#939598", "role": "gris K50" },
+      "lightGray": { "hex": "#C7C8CA", "role": "gris K25" },
+      "liveRed": {
+        "hex": "#EA0029",
+        "pantone": "185 C",
+        "role": "acento heritage",
+        "rule": "máx. 30% del área; NO usarlo como color principal — en la app solo para errores/alertas puntuales"
+      }
+    },
+    "rules": {
+      "primaryDominance": "un color primario debe ocupar al menos 80% del área de diseño",
+      "logoMinSizeDigital": "15px de alto",
+      "logoClearSpace": "espacio libre mínimo = altura de la 'B' del logo alrededor"
+    }
+  },
+
+  "appTheme": {
+    "comment": "Muestreado de los mockups de la agencia (pág. 10-12): azul noche + glass teal + acentos cian.",
+    "background": {
+      "base": "#010F1D",
+      "deep": "#000A14",
+      "midnight": "#05141F",
+      "ambientTop": "#002C41",
+      "ambientCenter": "#001D2E",
+      "gradient": "radial/linear desde #002C41 arriba hacia #000A14 abajo, con haz de luz diagonal cian tenue"
+    },
+    "surface": {
+      "glassFill": "#044154",
+      "glassFillAlpha": "rgba(4, 65, 84, 0.55)",
+      "glassBorder": "#00586D",
+      "glassBorderBright": "#0C5C73",
+      "highlightFill": "#01546B",
+      "innerGlow": "sombra interior cian suave + glow exterior rgba(0,168,252,0.25)"
+    },
+    "accent": {
+      "processBlue": { "hex": "#00A8FC", "role": "CTA principal (botón circular, énfasis)" },
+      "cyanBright": { "hex": "#00CCFC", "role": "borde de chip seleccionado, números en foco" },
+      "cyanUi": { "hex": "#00AAD5", "role": "chips activos, subrayados, iconos" },
+      "cyanText": { "hex": "#4FC3E8", "role": "labels secundarios sobre fondo oscuro (aprox)" },
+      "tealGlow": { "hex": "#006C90", "role": "glow ambiental, bordes suaves" },
+      "greenArea": { "hex": "#005245", "role": "área 'tu entrada' en la curva del plan (pág. 12)" }
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#C7C8CA",
+      "muted": "#939598",
+      "accent": "#00CCFC"
+    }
+  },
+
+  "typography": {
+    "family": "Kia Signature",
+    "weights": { "light": 300, "regular": 400, "bold": 700 },
+    "files": {
+      "extractedFromPdf": [
+        "design/fonts/KiaSignatureLight.ttf",
+        "design/fonts/KiaSignatureRegular.ttf",
+        "design/fonts/KiaSignatureBold.ttf"
+      ],
+      "warning": "Subsets embebidos en el PDF: cubren A-Z a-z 0-9 y signos básicos; pedir OTF completos oficiales a la agencia para producción (tildes/ñ verificar)."
+    },
+    "rules": {
+      "headlines": ">= 14px, Bold o Regular",
+      "body": "< 14px en Regular o Light",
+      "headlineStyle": "Título grande en Polar White, mezcla Regular + Light, tracking normal",
+      "eyebrow": "MAYÚSCULAS con tracking amplio (~0.2em), Regular"
+    },
+    "fallback": "'Kia Signature', Inter, system-ui, sans-serif"
+  },
+
+  "shape": {
+    "panelRadius": "24px (tarjetas glass de specs y filas de hábitos)",
+    "bannerRadius": "28px (banner de total)",
+    "chipRadius": "16px (chips de selección rectangulares)",
+    "buttonPillRadius": "999px (CTA 'Continuar' y 'Atrás')",
+    "ctaCircle": "botón circular ~90px con anillo concéntrico y flecha ↑",
+    "border": "1px sólido cian translúcido; el seleccionado sube brillo y grosor visual con glow"
+  },
+
+  "iconography": {
+    "style": "outline 2px, esquinas suaves, monocromo (Midnight Black sobre claro / blanco-cian sobre oscuro)",
+    "sets": {
+      "pag6": "wayfinding retail (staff only, exhibición)",
+      "pag7": "UI + social: flechas, check, cancel, lock, batería/carga EV, play, redes (YouTube, FB, IG, IN, X, TikTok), carro, mapa, pin, calendario, settings, home, persona, correo, tarjeta, $",
+      "pag8": "acciones con etiqueta: Lock, Unlock, Download, Upload, Search, Previous, Next, Top, Down, Setting, Check, Cancel"
+    },
+    "appMapping": "reemplazar emojis actuales (🎧🛵☕ etc.) por iconos outline de este set en SVG"
+  },
+
+  "assets": {
+    "backgrounds": {
+      "files": [
+        "design/assets/fondo_p10.png",
+        "design/assets/fondo_p11.png",
+        "design/assets/fondo_p12.png"
+      ],
+      "resolution": "1920x1080",
+      "issue": "Traen la UI y textos QUEMADOS (incluye typo 'elécrico') — sirven como referencia, NO como fondo de producción.",
+      "request": "Pedir a la agencia: foto/render del carro SIN interfaz (idealmente vertical 1080x1920 para el tótem) + versión sin carro para pantallas interiores."
+    },
+    "logo": {
+      "official": "C:/Users/NICOLASESQUIVELBARRO/OneDrive - Metrokia S. A/DESCARGAS/LOGO_KIA.png y LOGOS KIA 1.ai (llegaron con el PDF)",
+      "usage": "logo Kia blanco arriba-izquierda con 'Movement that inspires'; 'EV2 CAMPUS' centrado en el header"
+    }
+  },
+
+  "layout": {
+    "totem": "1920x1080 en los mockups (16:9 horizontal) — OJO: nuestra app está pensada 9:16 vertical; confirmar orientación final del tótem con marketing",
+    "header": "logo izquierda / título de evento centrado / progreso 'PASO X DE 7' derecha",
+    "footer": "Atrás (pill ghost) + Continuar (pill cian ancho) centrados",
+    "habitRow": "icono | nombre + costo editable | fórmula '1 × $130.000 = $130.000/Sem × 4.3 semanas' | stepper − n + | total /Mes",
+    "planExtra": "pág. 12 agrega una CURVA con dos puntos (entrada % / crédito %) como visual del reparto — nice-to-have, no cambia la lógica"
+  }
+}
