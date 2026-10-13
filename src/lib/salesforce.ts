@@ -92,6 +92,7 @@ function description(lead: Lead): string {
   const v = fieldValues(lead);
   return [
     `EV2 Campus · ${lead.eventName} · tótem ${lead.totemId}`,
+    `Documento: ${lead.documentType} ${lead.documentNumber} · Concesionario: ${lead.dealership} (${lead.city})`,
     `Universidad: ${lead.university} · ${lead.program} · semestre ${lead.semester} · ${lead.age ?? "?"} años`,
     `Cuota simulada: $${v.monthlyCommitment} · plazo ${v.termMonths} m · inicial $${v.downPayment} · retoma $${v.tradeInValue} · financia $${v.financed}`,
     `Aporte estudiante: $${v.studentCapacity} · brecha familiar: $${v.familyGap} · cubre ${v.coveragePct}%`,
@@ -158,7 +159,9 @@ async function getAccessToken(): Promise<{ token: string; instanceUrl: string }>
 
 async function pushViaRest(lead: Lead): Promise<SalesforceResult> {
   const { token, instanceUrl } = await getAccessToken();
-  const { first, last } = splitName(lead.fullName);
+  // SGC pide nombres y apellidos separados; el split es solo respaldo.
+  const first = lead.firstName || splitName(lead.fullName).first;
+  const last = lead.lastName || splitName(lead.fullName).last;
   const version = process.env.SF_API_VERSION || "v61.0";
 
   const payload: Record<string, unknown> = {
@@ -210,7 +213,8 @@ async function pushViaRest(lead: Lead): Promise<SalesforceResult> {
 // ─────────────────────────────────────────────────────────────────
 
 async function pushViaWebToLead(lead: Lead): Promise<SalesforceResult> {
-  const { first, last } = splitName(lead.fullName);
+  const first = lead.firstName || splitName(lead.fullName).first;
+  const last = lead.lastName || splitName(lead.fullName).last;
 
   const form = new URLSearchParams({
     oid: process.env.SF_WEB_TO_LEAD_OID!,

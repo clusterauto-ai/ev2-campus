@@ -6,6 +6,7 @@ import { pushToCrm, triggerSmoke } from "@/lib/integrations";
 import { isSalesforceConfigured, pushToSalesforce } from "@/lib/salesforce";
 import { scoreLead, simulate } from "@/lib/finance";
 import { isAuthenticated } from "@/lib/auth";
+import { DEALERSHIPS, DOCUMENT_TYPES, isValidDocument } from "@/lib/dealerships";
 import type { Lead, SimulationInput } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -56,6 +57,29 @@ export async function POST(request: Request) {
   if (!/^3\d{9}$/.test(phone)) {
     return NextResponse.json(
       { error: "El celular debe tener 10 dígitos y empezar por 3." },
+      { status: 400 },
+    );
+  }
+
+  // ── Campos del formulario SGC (metrokia.co/cotizar) ────────────
+  const documentType = (DOCUMENT_TYPES as readonly string[]).includes(
+    String(body.documentType),
+  )
+    ? String(body.documentType)
+    : "Cédula de ciudadanía";
+  const documentNumber = clean(body.documentNumber, 15).toUpperCase();
+  if (!isValidDocument(documentType, documentNumber)) {
+    return NextResponse.json(
+      { error: "Número de documento inválido." },
+      { status: 400 },
+    );
+  }
+
+  const city = clean(body.city, 40);
+  const dealership = clean(body.dealership, 60);
+  if (!DEALERSHIPS[city] || !DEALERSHIPS[city].includes(dealership)) {
+    return NextResponse.json(
+      { error: "Selecciona ciudad y concesionario válidos." },
       { status: 400 },
     );
   }
@@ -116,13 +140,18 @@ export async function POST(request: Request) {
     eventName: clean(body.eventName) || config.copy.eventName,
     totemId: clean(body.totemId) || "DOMO-01",
     fullName,
+    firstName: clean(body.firstName, 40) || fullName.split(" ")[0],
+    lastName: clean(body.lastName, 40) || fullName.split(" ").slice(1).join(" "),
+    documentType,
+    documentNumber,
     age: Number.isFinite(ageValue) && ageValue > 0 ? Math.round(ageValue) : null,
     university: clean(body.university),
     program: clean(body.program),
     semester: clean(body.semester, 10),
     phone,
     email,
-    city: clean(body.city) || "Bogotá",
+    city,
+    dealership,
     dataConsent,
     commercialConsent,
     marketingConsent: body.marketingConsent === true,

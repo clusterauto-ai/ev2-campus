@@ -60,34 +60,42 @@ const IDLE_GRACE_MS = 30_000;
 const THANKS_TIMEOUT_MS = 25_000;
 
 export interface Profile {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   age: string;
   university: string;
   program: string;
   semester: string;
-  city: string;
 }
 
 export interface Contact {
   phone: string;
   email: string;
+  documentType: string;
+  documentNumber: string;
+  city: string;
+  dealership: string;
   dataConsent: boolean;
   commercialConsent: boolean;
   marketingConsent: boolean;
 }
 
 const EMPTY_PROFILE: Profile = {
-  fullName: "",
+  firstName: "",
+  lastName: "",
   age: "",
   university: "",
   program: "",
   semester: "",
-  city: "Bogotá",
 };
 
 const EMPTY_CONTACT: Contact = {
   phone: "",
   email: "",
+  documentType: "Cédula de ciudadanía",
+  documentNumber: "",
+  city: "",
+  dealership: "",
   dataConsent: false,
   commercialConsent: false,
   marketingConsent: false,
@@ -163,6 +171,7 @@ export function Experience({ config }: { config: AppConfig }) {
         body: JSON.stringify({
           ...profile,
           ...contact,
+          fullName: `${profile.firstName} ${profile.lastName}`.trim(),
           age: Number(profile.age) || null,
           eventName: process.env.NEXT_PUBLIC_EVENT_NAME,
           totemId: process.env.NEXT_PUBLIC_TOTEM_ID,

@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { ScreenShell } from "../ui/ScreenShell";
 import { OnScreenKeyboard } from "../ui/OnScreenKeyboard";
+import { CITIES, DEALERSHIPS, DOCUMENT_TYPES, isValidDocument } from "@/lib/dealerships";
 import type { AppConfig } from "@/lib/types";
 import type { Contact } from "../Experience";
 
@@ -38,13 +39,16 @@ export function CaptureScreen({
   submitting: boolean;
   error: string | null;
 }) {
-  const [active, setActive] = useState<"phone" | "email" | null>("phone");
+  const [active, setActive] = useState<"phone" | "email" | "document" | null>("phone");
 
   const set = (patch: Partial<Contact>) => onChange({ ...contact, ...patch });
 
   const phoneOk = PHONE_OK.test(contact.phone);
   const emailOk = EMAIL_OK.test(contact.email);
-  const ready = phoneOk && emailOk && contact.dataConsent && contact.commercialConsent;
+  const docOk = isValidDocument(contact.documentType, contact.documentNumber);
+  const placeOk = Boolean(contact.city && contact.dealership);
+  const ready =
+    phoneOk && emailOk && docOk && placeOk && contact.dataConsent && contact.commercialConsent;
 
   return (
     <ScreenShell
@@ -82,6 +86,32 @@ export function CaptureScreen({
           active={active === "email"}
           onPress={() => setActive("email")}
         />
+
+        {/* Documento, como lo exige el formulario SGC. */}
+        <div>
+          <p className="mb-[0.5rem] text-[0.85rem] font-medium text-fg-dim">Documento</p>
+          <div className="mb-[0.6rem] flex gap-[0.45rem]">
+            {DOCUMENT_TYPES.map((dt) => (
+              <button
+                key={dt}
+                type="button"
+                onClick={() => set({ documentType: dt, documentNumber: "" })}
+                data-selected={contact.documentType === dt}
+                className="chip flex-1 px-[0.5rem] py-[0.7rem] text-center text-[0.78rem] font-semibold leading-tight"
+              >
+                {dt.replace("Cédula de ", "C. ")}
+              </button>
+            ))}
+          </div>
+          <FieldButton
+            label=""
+            value={contact.documentNumber}
+            placeholder="Número de documento"
+            valid={docOk}
+            active={active === "document"}
+            onPress={() => setActive("document")}
+          />
+        </div>
       </div>
 
       {active === "phone" && (
@@ -101,10 +131,65 @@ export function CaptureScreen({
             set({ email: (contact.email + char).toLowerCase().slice(0, 80) })
           }
           onBackspace={() => set({ email: contact.email.slice(0, -1) })}
-          onDone={() => setActive(null)}
-          doneLabel="Listo"
+          onDone={() => setActive("document")}
+          doneLabel="Siguiente: documento"
           doneDisabled={!emailOk}
         />
+      )}
+
+      {active === "document" && (
+        <OnScreenKeyboard
+          mode={contact.documentType === "Pasaporte" ? "email" : "numeric"}
+          onKey={(char) =>
+            set({
+              documentNumber: (contact.documentNumber + char)
+                .replace(/[^A-Za-z0-9]/g, "")
+                .toUpperCase()
+                .slice(0, 15),
+            })
+          }
+          onBackspace={() => set({ documentNumber: contact.documentNumber.slice(0, -1) })}
+          onDone={() => setActive(null)}
+          doneLabel="Listo"
+          doneDisabled={!docOk}
+        />
+      )}
+
+      {/* Ciudad y concesionario (valores del formulario SGC). */}
+      {active === null && (
+        <div className="mt-[1.4rem]">
+          <p className="mb-[0.5rem] text-[0.85rem] font-medium text-fg-dim">
+            ¿En qué concesionario te gustaría que te atiendan?
+          </p>
+          <div className="flex gap-[0.45rem]">
+            {CITIES.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => set({ city: c, dealership: DEALERSHIPS[c].length === 1 ? DEALERSHIPS[c][0] : "" })}
+                data-selected={contact.city === c}
+                className="chip flex-1 py-[0.75rem] text-center text-[0.85rem] font-semibold"
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+          {contact.city && DEALERSHIPS[contact.city]?.length > 1 && (
+            <div className="mt-[0.6rem] flex flex-wrap gap-[0.45rem]">
+              {DEALERSHIPS[contact.city].map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => set({ dealership: d })}
+                  data-selected={contact.dealership === d}
+                  className="chip px-[0.9rem] py-[0.7rem] text-[0.8rem] font-medium"
+                >
+                  {d.replace("Metrokia - ", "")}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       )}
 
       {active === null && (

@@ -191,13 +191,21 @@ export interface Lead {
   totemId: string;
 
   fullName: string;
+  /** Nombres y apellidos separados, como los exige el formulario SGC. */
+  firstName: string;
+  lastName: string;
+  /** Documento de identidad (requerido por SGC). */
+  documentType: string;
+  documentNumber: string;
   age: number | null;
   university: string;
   program: string;
   semester: string;
   phone: string;
   email: string;
+  /** Ciudad y concesionario elegidos (valores del formulario SGC). */
   city: string;
+  dealership: string;
 
   /** 1. Autorización de tratamiento de datos personales (obligatoria). */
   dataConsent: boolean;

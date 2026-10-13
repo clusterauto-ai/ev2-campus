@@ -33,7 +33,7 @@ export function ResultScreen({
   onBack: () => void;
 }) {
   const narrative = buildNarrative(result);
-  const firstName = profile.fullName.trim().split(" ")[0] || "Tú";
+  const firstName = profile.firstName.trim().split(" ")[0] || "Tú";
   const coverage = Math.round(result.coveragePct);
   const surplus = Math.max(0, result.studentCapacity - result.realMonthlyCost);
 

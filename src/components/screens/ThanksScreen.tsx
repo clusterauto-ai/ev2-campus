@@ -23,7 +23,7 @@ export function ThanksScreen({
   result: SimulationResult;
   onDone: () => void;
 }) {
-  const firstName = profile.fullName.trim().split(" ")[0] || "";
+  const firstName = profile.firstName.trim().split(" ")[0] || "";
   const [burst, setBurst] = useState(false);
 
   useEffect(() => {

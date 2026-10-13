@@ -48,7 +48,7 @@ const OTHER = "Otra";
 const AGES = ["17", "18", "19", "20", "21", "22", "23", "24", "25+"];
 const SEMESTERS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
 
-type Editing = "name" | "university" | "program" | null;
+type Editing = "firstName" | "lastName" | "university" | "program" | null;
 
 export function ProfileScreen({
   profile,
@@ -62,7 +62,7 @@ export function ProfileScreen({
   onBack: () => void;
 }) {
   const [editing, setEditing] = useState<Editing>(
-    profile.fullName.length === 0 ? "name" : null,
+    profile.firstName.length === 0 ? "firstName" : null,
   );
   // Qué chips "Otra" están activos (el valor libre vive en profile).
   const [otherUni, setOtherUni] = useState(
@@ -74,9 +74,11 @@ export function ProfileScreen({
 
   const set = (patch: Partial<Profile>) => onChange({ ...profile, ...patch });
 
-  const nameReady = profile.fullName.trim().length >= 3;
+  const firstOk = profile.firstName.trim().length >= 2;
+  const lastOk = profile.lastName.trim().length >= 2;
   const ready =
-    nameReady &&
+    firstOk &&
+    lastOk &&
     profile.age &&
     profile.university.trim().length >= 2 &&
     profile.semester;
@@ -97,28 +99,51 @@ export function ProfileScreen({
       nextDisabled={!ready}
     >
       <div className="flex flex-col gap-[1.6rem]">
-        {/* ── Nombre ────────────────────────────────────────────── */}
+        {/* ── Nombres y apellidos (separados, como los pide SGC) ── */}
         <Field label="¿Cómo te llamas?">
-          <button
-            type="button"
-            onClick={() => setEditing("name")}
-            className="field flex items-center justify-between px-[1.3rem] py-[1.15rem] text-left text-[1.15rem]"
-          >
-            <span className={profile.fullName ? "text-fg" : "text-fg-mute"}>
-              {profile.fullName || "Toca para escribir"}
-            </span>
-            <span className="text-[1.1rem] text-fg-mute">✎</span>
-          </button>
+          <div className="grid grid-cols-2 gap-[0.6rem]">
+            <button
+              type="button"
+              onClick={() => setEditing("firstName")}
+              className="field flex items-center justify-between px-[1.1rem] py-[1.15rem] text-left text-[1.05rem]"
+              style={editing === "firstName" ? { borderColor: "rgba(0,204,252,.6)" } : undefined}
+            >
+              <span className={profile.firstName ? "text-fg" : "text-fg-mute"}>
+                {profile.firstName || "Nombres"}
+              </span>
+              <span className="text-[1rem] text-fg-mute">✎</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditing("lastName")}
+              className="field flex items-center justify-between px-[1.1rem] py-[1.15rem] text-left text-[1.05rem]"
+              style={editing === "lastName" ? { borderColor: "rgba(0,204,252,.6)" } : undefined}
+            >
+              <span className={profile.lastName ? "text-fg" : "text-fg-mute"}>
+                {profile.lastName || "Apellidos"}
+              </span>
+              <span className="text-[1rem] text-fg-mute">✎</span>
+            </button>
+          </div>
         </Field>
 
-        {editing === "name" ? (
+        {editing === "firstName" ? (
           <OnScreenKeyboard
             mode="text"
-            onKey={(char) => set({ fullName: (profile.fullName + char).slice(0, 60) })}
-            onBackspace={() => set({ fullName: profile.fullName.slice(0, -1) })}
+            onKey={(char) => set({ firstName: (profile.firstName + char).slice(0, 40) })}
+            onBackspace={() => set({ firstName: profile.firstName.slice(0, -1) })}
+            onDone={() => setEditing("lastName")}
+            doneLabel="Siguiente: apellidos"
+            doneDisabled={!firstOk}
+          />
+        ) : editing === "lastName" ? (
+          <OnScreenKeyboard
+            mode="text"
+            onKey={(char) => set({ lastName: (profile.lastName + char).slice(0, 40) })}
+            onBackspace={() => set({ lastName: profile.lastName.slice(0, -1) })}
             onDone={() => setEditing(null)}
             doneLabel="Listo"
-            doneDisabled={!nameReady}
+            doneDisabled={!lastOk}
           />
         ) : (
           <>
