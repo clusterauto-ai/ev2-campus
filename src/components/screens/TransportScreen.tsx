@@ -15,13 +15,16 @@ import type { AppConfig } from "@/lib/types";
  * ya está pagando por moverse, solo que sin quedarse con nada.
  */
 
+// Feedback de marketing (Juana, sept 2026): sin descripciones por valor —
+// en qué se va la plata depende de cada quien. Solo el monto, y "Otro
+// valor" sigue abierto para quien quiera poner el suyo exacto.
 const OPTIONS = [
-  { value: 0, label: "Nada", hint: "Me llevan o camino" },
-  { value: 120_000, label: "$120 mil", hint: "TransMilenio y uno que otro Uber" },
-  { value: 250_000, label: "$250 mil", hint: "Mezclo transporte público y apps" },
-  { value: 400_000, label: "$400 mil", hint: "Casi siempre en Uber o taxi" },
-  { value: 600_000, label: "$600 mil", hint: "Manejo el carro de la casa" },
-  { value: 850_000, label: "$850 mil o más", hint: "Gasolina, parqueaderos y peajes" },
+  { value: 0, label: "Nada" },
+  { value: 120_000, label: "$120 mil" },
+  { value: 250_000, label: "$250 mil" },
+  { value: 400_000, label: "$400 mil" },
+  { value: 600_000, label: "$600 mil" },
+  { value: 850_000, label: "$850 mil o más" },
 ];
 
 export function TransportScreen({
@@ -73,13 +76,10 @@ export function TransportScreen({
               onChange(option.value);
             }}
             data-selected={!other && value === option.value}
-            className="chip flex flex-col items-start gap-[0.3rem] px-[1.2rem] py-[1.25rem] text-left"
+            className="chip flex items-center justify-center px-[1.2rem] py-[1.35rem] text-center"
           >
             <span className="numeric text-[1.35rem] font-semibold">
               {option.label}
-            </span>
-            <span className="text-[0.78rem] leading-[1.35] text-fg-mute">
-              {option.hint}
             </span>
           </button>
         ))}

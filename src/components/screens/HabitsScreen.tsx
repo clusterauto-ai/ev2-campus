@@ -388,10 +388,16 @@ function HabitRow({
           </button>
         </div>
 
-        <div className="flex items-center gap-[0.5rem]">
-          <StepButton onPress={onDec} disabled={count === 0}>−</StepButton>
-          <span className="numeric w-[1.6rem] text-center text-[1.2rem] font-semibold text-fg">{count}</span>
-          <StepButton onPress={onInc} disabled={count >= max}>+</StepButton>
+        {/* Claridad pedida por marketing: el número son VECES por período. */}
+        <div className="flex flex-col items-center gap-[0.2rem]">
+          <div className="flex items-center gap-[0.5rem]">
+            <StepButton onPress={onDec} disabled={count === 0}>−</StepButton>
+            <span className="numeric w-[1.6rem] text-center text-[1.2rem] font-semibold text-fg">{count}</span>
+            <StepButton onPress={onInc} disabled={count >= max}>+</StepButton>
+          </div>
+          <span className="text-[0.62rem] leading-none text-fg-mute">
+            {period === "week" ? "veces por semana" : "veces al mes"}
+          </span>
         </div>
       </div>
 

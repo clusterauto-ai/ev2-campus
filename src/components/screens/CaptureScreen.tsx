@@ -63,7 +63,7 @@ export function CaptureScreen({
       subtitle="Para que la puedas mostrar en casa con los números en la mano."
       onBack={onBack}
       onNext={active === null ? onSubmit : undefined}
-      nextLabel="Enviar y liberar el humo"
+      nextLabel="¡Acceso desbloqueado! 🔓 Inicia el juego con EV2"
       nextDisabled={!ready}
       nextBusy={submitting}
       footerNote={active === null ? config.copy.legalNotice : undefined}

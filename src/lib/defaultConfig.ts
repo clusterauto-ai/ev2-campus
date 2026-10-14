@@ -123,7 +123,8 @@ export const DEFAULT_CONFIG: AppConfig = {
       label: "Plan de fin de semana",
       hint: "Salir de Bogotá con los amigos",
       icon: "🏔️",
-      unitCost: 320_000,
+      // Ajustado de 320k a 120k por feedback de marketing (más realista).
+      unitCost: 120_000,
       period: "month",
       max: 3,
       defaultCount: 0,

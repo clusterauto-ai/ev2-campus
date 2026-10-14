@@ -209,8 +209,10 @@ export function buildNarrative(result: SimulationResult): {
   const top = result.habitBreakdown[0];
   const pct = Math.round(result.coveragePct);
 
+  // Fraseo ajustado por feedback de marketing: debe quedar claro que el
+  // ahorro sale de DEJAR el hábito, no de hacerlo.
   const habitPhrase = top
-    ? `Solo con ${top.label.toLowerCase()} ya liberas ${formatCOP(top.monthly)} al mes.`
+    ? `Solo recortando ${top.label.toLowerCase()} ya liberas ${formatCOP(top.monthly)} al mes.`
     : "Aún no elegiste nada que sacrificar: vuelve y prueba moviendo los controles.";
 
   if (pct >= 100) {

@@ -288,8 +288,16 @@ export function PlanScreen({
       {/* Planes especiales de la financiera (propuesta Finandina pág. 4). */}
       {!editing && financing.financierName && (
         <div className="panel mt-[1.4rem] p-[1.4rem]">
-          <div className="mb-[0.9rem] flex items-baseline justify-between">
-            <p className="eyebrow">Planes {financing.financierName}</p>
+          <div className="mb-[0.9rem] flex items-center justify-between gap-[0.8rem]">
+            <div className="flex items-center gap-[0.7rem]">
+              {/* Logo oficial del banco aliado, sobre placa blanca para
+                  respetar su marca (es rojo) sin romper el tema oscuro. */}
+              <span className="flex items-center rounded-[0.6rem] bg-white px-[0.55rem] py-[0.3rem]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/finandina.webp" alt="Banco Finandina" className="h-[1.6rem] w-auto" />
+              </span>
+              <p className="eyebrow">Planes {financing.financierName}</p>
+            </div>
             <p className="text-[0.7rem] text-fg-mute">según perfil y política vigente</p>
           </div>
           <div className="grid grid-cols-2 gap-[0.55rem] text-[0.78rem] leading-[1.4]">
