@@ -7,7 +7,7 @@ import { AnimatedNumber } from "../ui/AnimatedNumber";
 import { Icon } from "../ui/Icon";
 import { OnScreenKeyboard } from "../ui/OnScreenKeyboard";
 import { formatDigitsAsCOP } from "../ui/InlineEntry";
-import { formatCOP, habitMonthlySaving, WEEKS_PER_MONTH } from "@/lib/finance";
+import { formatCOP, habitMonthlySaving } from "@/lib/finance";
 import type {
   AppConfig,
   CustomHabit,
@@ -58,7 +58,7 @@ export function HabitsScreen({
   const [draft, setDraft] = useState<{ label: string; cost: string; period: HabitPeriod }>({
     label: "",
     cost: "",
-    period: "week",
+    period: "month",
   });
   const [showDraft, setShowDraft] = useState(false);
 
@@ -89,7 +89,7 @@ export function HabitsScreen({
       count: 1,
     };
     onChange({ customHabits: [...input.customHabits, custom] });
-    setDraft({ label: "", cost: "", period: "week" });
+    setDraft({ label: "", cost: "", period: "month" });
     setShowDraft(false);
     setEditing(null);
   };
@@ -114,10 +114,9 @@ export function HabitsScreen({
           <span className="text-gradient">por tu primer carro?</span>
         </>
       }
-      subtitle="No es para siempre: es para que veas que la plata ya está, solo que hoy se va en otra cosa. Los valores son sugeridos: tócalos y ponles los tuyos."
+      subtitle="Los valores son sugeridos: tócalos y ponles los tuyos."
       onBack={onBack}
       onNext={keyboardOpen ? undefined : onNext}
-      footerNote="Nadie va a revisar si lo cumples. La idea es que veas el número."
     >
       {/* Contador de ahorro: siempre visible mientras se juega. */}
       <div
@@ -266,19 +265,8 @@ export function HabitsScreen({
               </button>
             </div>
 
-            <div className="mt-[0.7rem] flex gap-[0.5rem]">
-              {(["week", "month"] as const).map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setDraft((d) => ({ ...d, period: p }))}
-                  data-selected={draft.period === p}
-                  className="chip flex-1 py-[0.7rem] text-[0.85rem]"
-                >
-                  {p === "week" ? "Veces por semana" : "Veces al mes"}
-                </button>
-              ))}
-            </div>
+            {/* Todo el análisis es mensual (decisión de octubre 2026):
+                el hábito nuevo entra como veces al mes, sin selector. */}
 
             {editing?.kind === "custom-label" && (
               <OnScreenKeyboard
@@ -362,7 +350,7 @@ function HabitRow({
   onEditCost: () => void;
   children?: React.ReactNode;
 }) {
-  const periodShort = period === "week" ? "sem" : "mes";
+  void perPeriod; // ya no se muestra: la cuenta es directa al mes
 
   return (
     <div className="panel p-[1.15rem]">
@@ -408,12 +396,9 @@ function HabitRow({
       >
         {count > 0 ? (
           <>
+            {/* Cuenta directa al mes, sin factores de conversión. */}
             <span className="numeric text-fg-dim">
-              {count} × {COMPACT(unitCost)} ={" "}
-              <span className="font-semibold text-fg">{COMPACT(perPeriod)}</span>/{periodShort}
-              {period === "week" && (
-                <span className="text-fg-mute"> · ×{WEEKS_PER_MONTH.toFixed(1)} semanas</span>
-              )}
+              {count} {count === 1 ? "vez" : "veces"} × {COMPACT(unitCost)}
             </span>
             <span className="numeric font-semibold text-[var(--accent-lime)]">
               {COMPACT(monthly)}/mes

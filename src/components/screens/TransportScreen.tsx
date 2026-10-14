@@ -61,7 +61,6 @@ export function TransportScreen({
           <span className="text-gradient">moviéndote al mes?</span>
         </>
       }
-      subtitle="Cuenta Uber, taxi, TransMilenio, gasolina prestada, parqueaderos. Lo que se te va solo en llegar a la U."
       onBack={onBack}
       onNext={onNext}
     >

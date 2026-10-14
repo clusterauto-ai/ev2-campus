@@ -59,7 +59,7 @@ export function ThanksScreen({
         </p>
 
         <h1 className="display mt-[0.9rem] text-[3.6rem]">
-          <span className="text-gradient">Ya tienes el número.</span>
+          <span className="text-gradient">¡Ya tenemos tus datos!</span>
         </h1>
 
         <p className="mx-auto mt-[1.4rem] max-w-[30rem] text-[1.05rem] leading-[1.5] text-fg-dim">

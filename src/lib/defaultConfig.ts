@@ -58,9 +58,9 @@ export const DEFAULT_CONFIG: AppConfig = {
       hint: "Cover, trago y el regreso a la casa",
       icon: "🎧",
       unitCost: 130_000,
-      period: "week",
-      max: 4,
-      defaultCount: 1,
+      period: "month",
+      max: 12,
+      defaultCount: 2,
       active: true,
     },
     {
@@ -69,9 +69,9 @@ export const DEFAULT_CONFIG: AppConfig = {
       hint: "El antojo de las 11 de la noche",
       icon: "🛵",
       unitCost: 38_000,
-      period: "week",
-      max: 7,
-      defaultCount: 1,
+      period: "month",
+      max: 30,
+      defaultCount: 4,
       active: true,
     },
     {
@@ -80,9 +80,9 @@ export const DEFAULT_CONFIG: AppConfig = {
       hint: "El de la cafetería de siempre",
       icon: "☕",
       unitCost: 14_000,
-      period: "week",
-      max: 14,
-      defaultCount: 2,
+      period: "month",
+      max: 30,
+      defaultCount: 8,
       active: true,
     },
     {
@@ -91,9 +91,9 @@ export const DEFAULT_CONFIG: AppConfig = {
       hint: "En vez de llevar de la casa",
       icon: "🍽️",
       unitCost: 28_000,
-      period: "week",
-      max: 7,
-      defaultCount: 1,
+      period: "month",
+      max: 30,
+      defaultCount: 4,
       active: true,
     },
     {
@@ -115,7 +115,7 @@ export const DEFAULT_CONFIG: AppConfig = {
       unitCost: 180_000,
       period: "month",
       max: 4,
-      defaultCount: 0,
+      defaultCount: 1,
       active: true,
     },
     {
@@ -127,7 +127,7 @@ export const DEFAULT_CONFIG: AppConfig = {
       unitCost: 120_000,
       period: "month",
       max: 3,
-      defaultCount: 0,
+      defaultCount: 1,
       active: true,
     },
     {
@@ -147,10 +147,10 @@ export const DEFAULT_CONFIG: AppConfig = {
     eventName: "EV2 Campus",
     heroTitle: "Tu primer carro\npuede ser eléctrico",
     heroSubtitle:
-      "Descubre en 90 segundos qué tan cerca estás del Kia EV2. Sin fórmulas raras, con tus números reales.",
+      "Descubre qué tan cerca estás del Kia EV2, con tus números reales.",
     ctaStart: "Empezar",
     closingMessage:
-      "Un asesor Kia te va a contactar con tu simulación lista para que la revises en familia.",
+      "Un asesor Kia te contactará muy pronto con tu simulación lista.",
     legalNotice:
       "Valores estimados con fines informativos; no constituyen oferta comercial ni aprobación de crédito. Financiación otorgada por Banco Finandina, sujeta a estudio, scoring y políticas vigentes. Tasas de referencia que pueden variar.",
   },

@@ -63,7 +63,7 @@ export function CaptureScreen({
       subtitle="Para que la puedas mostrar en casa con los números en la mano."
       onBack={onBack}
       onNext={active === null ? onSubmit : undefined}
-      nextLabel="¡Acceso desbloqueado! 🔓 Inicia el juego con EV2"
+      nextLabel="¡Acceso desbloqueado! 🔓"
       nextDisabled={!ready}
       nextBusy={submitting}
       footerNote={active === null ? config.copy.legalNotice : undefined}
@@ -174,7 +174,9 @@ export function CaptureScreen({
               </button>
             ))}
           </div>
-          {contact.city && DEALERSHIPS[contact.city]?.length > 1 && (
+          {/* Siempre visibles, aunque la ciudad tenga una sola sede:
+              así se confirma visualmente cuál quedó elegida. */}
+          {contact.city && DEALERSHIPS[contact.city]?.length > 0 && (
             <div className="mt-[0.6rem] flex flex-wrap gap-[0.45rem]">
               {DEALERSHIPS[contact.city].map((d) => (
                 <button

@@ -53,21 +53,21 @@ export function ResultScreen({
       subtitle={narrative.body}
       onBack={onBack}
       onNext={onNext}
-      nextLabel="¿Y si fuera de gasolina?"
+      nextLabel="Quiero mi simulación"
       footerNote={config.copy.legalNotice}
     >
-      <div className="flex flex-col gap-[0.9rem]">
-        {/* ① Tu aporte */}
-        <Stage
-          number="1"
-          eyebrow="Lo que tú reúnes cada mes"
-          amount={result.studentCapacity}
-          color="var(--accent-lime)"
-          animated
-        >
-          <div className="mt-[0.9rem] flex flex-col gap-[0.45rem] text-[0.82rem]">
+      {/* Comparativo lado a lado (feedback oct 2026): lo que reúnes
+          frente a lo que cuesta, y debajo la diferencia. Una sola
+          lectura horizontal en vez de tres bloques apilados. */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-[0.7rem]">
+        <div className="panel flex flex-col p-[1.3rem]">
+          <p className="eyebrow">Reúnes al mes</p>
+          <p className="numeric mt-[0.45rem] text-[1.9rem] font-light leading-none text-[var(--accent-lime)]">
+            <AnimatedNumber value={result.studentCapacity} format={formatCOP} />
+          </p>
+          <div className="mt-[0.9rem] flex flex-col gap-[0.4rem] text-[0.78rem]">
             {top3.map((h) => (
-              <Line key={h.id} icon={h.id} label={`Sacrificas ${h.label.toLowerCase()}`} value={h.monthly} />
+              <Line key={h.id} icon={h.id} label={h.label} value={h.monthly} />
             ))}
             {result.habitBreakdown.length > 3 && (
               <Line
@@ -77,129 +77,75 @@ export function ResultScreen({
               />
             )}
             {result.transportSaving > 0 && (
-              <Line icon="🚕" label="Lo que ya gastas moviéndote" value={result.transportSaving} />
+              <Line icon="🚕" label="Transporte de hoy" value={result.transportSaving} />
             )}
             {result.studentCapacity === 0 && (
-              <p className="text-fg-mute">No elegiste nada todavía. Vuelve y mueve los controles.</p>
+              <p className="text-fg-mute">Vuelve y mueve los controles.</p>
             )}
           </div>
-        </Stage>
+        </div>
 
-        {/* ② Lo que cuesta */}
-        <Stage
-          number="2"
-          eyebrow="Lo que cuesta tener el EV2 cada mes"
-          amount={result.realMonthlyCost}
-          color="var(--fg)"
-        >
-          <div className="mt-[0.9rem] flex flex-col gap-[0.45rem] text-[0.82rem]">
-            <Line icon="🏦" label={`Cuota del crédito (${result.termMonths} meses)`} value={result.loanPayment} />
-            <Line icon="🛡️" label="Seguro todo riesgo" value={result.monthlyCommitment - result.loanPayment} />
-            <Line icon="⚡" label={`Cargarlo (${config.usage.monthlyKm} km)`} value={result.energyCost} />
-          </div>
-          {config.financing.offerFirstYearInterestOnly && result.financed > 0 && (
-            <p className="mt-[0.9rem] rounded-[0.9rem] bg-[rgba(0,168,252,.08)] px-[0.9rem] py-[0.7rem] text-[0.78rem] leading-[1.45] text-fg-dim">
-              Con el <span className="font-semibold text-[var(--accent-ice)]">Plan Cuota Baja</span>
-              {config.financing.financierName ? ` de ${config.financing.financierName}` : ""}, tu
-              primer año sería de{" "}
-              <span className="numeric font-semibold text-[var(--accent-ice)]">
-                {formatCOP(result.firstYearPayment + result.energyCost)}
-              </span>{" "}
-              al mes, todo incluido.
-            </p>
-          )}
-        </Stage>
+        {/* El "contra" visual entre las dos columnas. */}
+        <div className="flex items-center text-[1.3rem] font-light text-fg-mute">vs</div>
 
-        {/* ③ La diferencia */}
-        <div
-          className="panel p-[1.5rem]"
-          style={{ boxShadow: "var(--glow)", borderColor: "rgba(0,204,252,.35)" }}
-        >
-          <div className="flex items-start gap-[0.8rem]">
-            <Badge>3</Badge>
-            <div className="flex-1">
-              <p className="eyebrow">{surplus > 0 ? "Te sobra" : "Te falta"}</p>
-              <p
-                className="numeric mt-[0.35rem] text-[2.8rem] font-light leading-none"
-                style={{ color: toneColor }}
-              >
-                <AnimatedNumber value={surplus > 0 ? surplus : result.familyGap} format={formatCOP} />
-              </p>
-              <p className="mt-[0.4rem] text-[0.82rem] text-fg-dim">
-                {surplus > 0
-                  ? "al mes, después de pagar el carro completo."
-                  : "al mes. Ese es el número para hablar en casa."}
-              </p>
-            </div>
-          </div>
-
-          {/* Barra de cobertura */}
-          <div className="mt-[1.2rem]">
-            <div className="flex h-[1rem] overflow-hidden rounded-full bg-white/[0.06]">
-              <div
-                className="h-full transition-[width] duration-1000 ease-out"
-                style={{
-                  width: `${coverage}%`,
-                  background: `linear-gradient(90deg, var(--accent), ${toneColor})`,
-                }}
-              />
-            </div>
-            <div className="mt-[0.5rem] flex justify-between text-[0.78rem]">
-              <span className="text-fg-dim">
-                Tú cubres el{" "}
-                <span className="font-semibold" style={{ color: toneColor }}>
-                  {coverage}%
-                </span>
-              </span>
-              {result.familyGap > 0 && (
-                <span className="text-fg-dim">
-                  Falta el <span className="font-semibold text-fg">{100 - coverage}%</span>
-                </span>
-              )}
-            </div>
+        <div className="panel flex flex-col p-[1.3rem]">
+          <p className="eyebrow">Cuesta al mes</p>
+          <p className="numeric mt-[0.45rem] text-[1.9rem] font-light leading-none text-fg">
+            <AnimatedNumber value={result.realMonthlyCost} format={formatCOP} />
+          </p>
+          <div className="mt-[0.9rem] flex flex-col gap-[0.4rem] text-[0.78rem]">
+            <Line icon="🏦" label={`Cuota (${result.termMonths} m)`} value={result.loanPayment} />
+            <Line icon="🛡️" label="Seguro" value={result.monthlyCommitment - result.loanPayment} />
+            <Line icon="⚡" label="Carga" value={result.energyCost} />
           </div>
         </div>
       </div>
-    </ScreenShell>
-  );
-}
 
-function Stage({
-  number,
-  eyebrow,
-  amount,
-  color,
-  animated = false,
-  children,
-}: {
-  number: string;
-  eyebrow: string;
-  amount: number;
-  color: string;
-  animated?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="panel p-[1.4rem]">
-      <div className="flex items-start gap-[0.8rem]">
-        <Badge>{number}</Badge>
-        <div className="flex-1">
-          <p className="eyebrow">{eyebrow}</p>
-          <p className="numeric mt-[0.35rem] text-[2.2rem] font-light leading-none" style={{ color }}>
-            {animated ? <AnimatedNumber value={amount} format={formatCOP} /> : formatCOP(amount)}
+      {/* La diferencia, en grande y debajo de las dos columnas. */}
+      <div
+        className="panel mt-[0.9rem] p-[1.5rem]"
+        style={{ boxShadow: "var(--glow)", borderColor: "rgba(0,204,252,.35)" }}
+      >
+        <div className="flex items-end justify-between gap-[1rem]">
+          <div>
+            <p className="eyebrow">{surplus > 0 ? "Te sobra" : "Te falta"}</p>
+            <p
+              className="numeric mt-[0.35rem] text-[2.8rem] font-light leading-none"
+              style={{ color: toneColor }}
+            >
+              <AnimatedNumber value={surplus > 0 ? surplus : result.familyGap} format={formatCOP} />
+            </p>
+          </div>
+          <p className="numeric pb-[0.3rem] text-right text-[1.1rem] font-semibold" style={{ color: toneColor }}>
+            {coverage}%<span className="block text-[0.68rem] font-normal text-fg-mute">lo cubres tú</span>
           </p>
         </div>
-      </div>
-      {children}
-    </div>
-  );
-}
 
-function Badge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="mt-[0.15rem] flex h-[1.7rem] w-[1.7rem] shrink-0 items-center justify-center rounded-full bg-white/[0.09] text-[0.82rem] font-bold text-fg">
-      {children}
-    </span>
+        <div className="mt-[1rem]">
+          <div className="flex h-[1rem] overflow-hidden rounded-full bg-white/[0.06]">
+            <div
+              className="h-full transition-[width] duration-1000 ease-out"
+              style={{
+                width: `${coverage}%`,
+                background: `linear-gradient(90deg, var(--accent), ${toneColor})`,
+              }}
+            />
+          </div>
+        </div>
+
+        {config.financing.offerFirstYearInterestOnly && result.financed > 0 && (
+          <p className="mt-[1rem] rounded-[0.9rem] bg-[rgba(0,168,252,.08)] px-[0.9rem] py-[0.7rem] text-[0.78rem] leading-[1.45] text-fg-dim">
+            Con el <span className="font-semibold text-[var(--accent-ice)]">Plan Cuota Baja</span>
+            {config.financing.financierName ? ` de ${config.financing.financierName}` : ""}, tu
+            primer año sería de{" "}
+            <span className="numeric font-semibold text-[var(--accent-ice)]">
+              {formatCOP(result.firstYearPayment + result.energyCost)}
+            </span>{" "}
+            al mes, todo incluido.
+          </p>
+        )}
+      </div>
+    </ScreenShell>
   );
 }
 

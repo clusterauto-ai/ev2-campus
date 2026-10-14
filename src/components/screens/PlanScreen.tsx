@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ScreenShell } from "../ui/ScreenShell";
 import { AnimatedNumber } from "../ui/AnimatedNumber";
 import { InlineEntry, formatDigitsAsCOP } from "../ui/InlineEntry";
-import { formatCOP } from "@/lib/finance";
+import { formatCOP, formatCompactCOP } from "@/lib/finance";
 import type { AppConfig, SimulationInput, SimulationResult } from "@/lib/types";
 
 /**
@@ -133,11 +133,10 @@ export function PlanScreen({
                 <span className="numeric block text-[1.05rem] font-semibold">
                   {o.pct === 0 ? "$0" : `${o.pct}%`}
                 </span>
-                {o.pct === 0 && (
-                  <span className="block text-[0.62rem] leading-tight text-fg-mute">
-                    sin inicial
-                  </span>
-                )}
+                {/* El equivalente en pesos, para no hacer la cuenta mental. */}
+                <span className="numeric block text-[0.64rem] leading-tight text-fg-mute">
+                  {o.pct === 0 ? "sin inicial" : formatCompactCOP(o.value)}
+                </span>
               </button>
             ))}
             <button
@@ -292,9 +291,10 @@ export function PlanScreen({
             <div className="flex items-center gap-[0.7rem]">
               {/* Logo oficial del banco aliado, sobre placa blanca para
                   respetar su marca (es rojo) sin romper el tema oscuro. */}
-              <span className="flex items-center rounded-[0.6rem] bg-white px-[0.55rem] py-[0.3rem]">
+              <span className="flex items-center rounded-[0.6rem] bg-white px-[0.7rem] py-[0.35rem]">
+                {/* Versión horizontal oficial del brandbook Finandina. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/finandina.webp" alt="Banco Finandina" className="h-[1.6rem] w-auto" />
+                <img src="/finandina-h.webp" alt="Banco Finandina - Banca libre" className="h-[1.5rem] w-auto" />
               </span>
               <p className="eyebrow">Planes {financing.financierName}</p>
             </div>
@@ -310,6 +310,18 @@ export function PlanScreen({
             <PlanCard title="Período de gracia" body="Hasta 12 meses pagando solo cargos fijos" />
             <PlanCard title="Cuota extra 14/12" body="Cuota extra opcional en junio y diciembre" />
             <PlanCard title="Sin historial crediticio" body="Financiación hasta el 70%, o más con codeudor familiar" />
+          </div>
+
+          {/* Sello regulatorio que debe acompañar la marca del banco.
+              El PNG es negro: se invierte para legibilidad en tema oscuro. */}
+          <div className="mt-[1rem] flex justify-end">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/vigilado.png"
+              alt="Vigilado Superintendencia Financiera de Colombia"
+              className="h-[0.8rem] w-auto opacity-60"
+              style={{ filter: "invert(1)" }}
+            />
           </div>
         </div>
       )}

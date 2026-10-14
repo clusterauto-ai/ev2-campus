@@ -7,13 +7,11 @@ import { Ambient } from "./Ambient";
 import { Stepper } from "./ui/Stepper";
 import { StillThere } from "./ui/StillThere";
 import { AttractScreen } from "./screens/AttractScreen";
-import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ProfileScreen } from "./screens/ProfileScreen";
 import { TransportScreen } from "./screens/TransportScreen";
 import { HabitsScreen } from "./screens/HabitsScreen";
 import { PlanScreen } from "./screens/PlanScreen";
 import { ResultScreen } from "./screens/ResultScreen";
-import { ElectricScreen } from "./screens/ElectricScreen";
 import { CaptureScreen } from "./screens/CaptureScreen";
 import { ThanksScreen } from "./screens/ThanksScreen";
 import { defaultSimulationInput, simulate } from "@/lib/finance";
@@ -21,13 +19,11 @@ import type { AppConfig, SimulationInput } from "@/lib/types";
 
 export type Step =
   | "attract"
-  | "welcome"
   | "profile"
   | "transport"
   | "habits"
   | "plan"
   | "result"
-  | "electric"
   | "capture"
   | "thanks";
 
@@ -38,19 +34,10 @@ const TRACKED: Step[] = [
   "habits",
   "plan",
   "result",
-  "electric",
   "capture",
 ];
 
-const STEP_LABELS = [
-  "Tú",
-  "Movilidad",
-  "Hábitos",
-  "Plan",
-  "Resultado",
-  "Eléctrico",
-  "Contacto",
-];
+const STEP_LABELS = ["Tú", "Movilidad", "Hábitos", "Plan", "Resultado", "Contacto"];
 
 /** Sin actividad este tiempo, aparece "¿Sigues ahí?". */
 const IDLE_WARNING_MS = 90_000;
@@ -232,12 +219,10 @@ export function Experience({ config }: { config: AppConfig }) {
             transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-1 flex-col"
           >
+            {/* Directo al perfil: la pantalla de bienvenida se eliminó
+                por el feedback de agilidad (menos texto, menos pasos). */}
             {step === "attract" && (
-              <AttractScreen config={config} onStart={() => setStep("welcome")} />
-            )}
-
-            {step === "welcome" && (
-              <WelcomeScreen config={config} onNext={() => setStep("profile")} />
+              <AttractScreen config={config} onStart={() => setStep("profile")} />
             )}
 
             {step === "profile" && (
@@ -288,17 +273,8 @@ export function Experience({ config }: { config: AppConfig }) {
                 config={config}
                 result={result}
                 profile={profile}
-                onNext={() => setStep("electric")}
-                onBack={() => setStep("plan")}
-              />
-            )}
-
-            {step === "electric" && (
-              <ElectricScreen
-                config={config}
-                result={result}
                 onNext={() => setStep("capture")}
-                onBack={() => setStep("result")}
+                onBack={() => setStep("plan")}
               />
             )}
 
@@ -308,7 +284,7 @@ export function Experience({ config }: { config: AppConfig }) {
                 contact={contact}
                 onChange={setContact}
                 onSubmit={submit}
-                onBack={() => setStep("electric")}
+                onBack={() => setStep("result")}
                 submitting={submitting}
                 error={submitError}
               />
