@@ -260,8 +260,10 @@ function FieldButton({
   onPress: () => void;
 }) {
   return (
-    <button type="button" onClick={onPress} className="text-left">
-      <p className="mb-[0.5rem] text-[0.85rem] font-medium text-fg-dim">{label}</p>
+    <button type="button" onClick={onPress} className="block w-full text-left">
+      {label && (
+        <p className="mb-[0.5rem] text-[0.85rem] font-medium text-fg-dim">{label}</p>
+      )}
       <div
         className="field flex items-center justify-between px-[1.3rem] py-[1.2rem] text-[1.2rem]"
         style={

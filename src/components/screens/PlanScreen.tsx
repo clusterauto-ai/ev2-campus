@@ -291,11 +291,15 @@ export function PlanScreen({
             <div className="flex items-center gap-[0.7rem]">
               {/* Logo oficial del banco aliado, sobre placa blanca para
                   respetar su marca (es rojo) sin romper el tema oscuro. */}
-              <span className="flex items-center rounded-[0.6rem] bg-white px-[0.7rem] py-[0.35rem]">
-                {/* Versión horizontal oficial del brandbook Finandina. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/finandina-h.webp" alt="Banco Finandina - Banca libre" className="h-[1.5rem] w-auto" />
-              </span>
+              {/* Aplicación "Blanco" del brandbook Finandina (pág. 5):
+                  logo monocromo blanco, integrado al fondo oscuro sin placa. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/finandina-h.webp"
+                alt="Banco Finandina - Banca libre"
+                className="h-[1.7rem] w-auto opacity-90"
+                style={{ filter: "brightness(0) invert(1)" }}
+              />
               <p className="eyebrow">Planes {financing.financierName}</p>
             </div>
             <p className="text-[0.7rem] text-fg-mute">según perfil y política vigente</p>

@@ -54,20 +54,22 @@ export function OnScreenKeyboard({
   if (mode === "numeric") {
     return (
       <div className="panel-solid mt-[1.2rem] p-[0.9rem]">
-        <div className="mx-auto grid max-w-[22rem] grid-cols-3 gap-[0.55rem]">
+        {/* Teclas de ancho completo por celda: el teclado queda centrado
+            y con área de toque generosa (feedback de estética, oct 2026). */}
+        <div className="mx-auto grid max-w-[18rem] grid-cols-3 gap-[0.55rem]">
           {ROWS_NUMERIC.flat().map((digit, index) =>
             digit === "" ? (
               index === 9 ? (
-                <Key key={index} onPress={onBackspace} variant="util">
+                <Key key={index} onPress={onBackspace} variant="util" full>
                   ⌫
                 </Key>
               ) : (
-                <Key key={index} onPress={onDone} variant="accent" disabled={doneDisabled}>
+                <Key key={index} onPress={onDone} variant="accent" disabled={doneDisabled} full>
                   ✓
                 </Key>
               )
             ) : (
-              <Key key={index} onPress={() => onKey(digit)}>
+              <Key key={index} onPress={() => onKey(digit)} full>
                 {digit}
               </Key>
             ),
@@ -154,6 +156,7 @@ function Key({
   variant = "default",
   wide = false,
   space = false,
+  full = false,
   disabled = false,
 }: {
   children: React.ReactNode;
@@ -161,6 +164,8 @@ function Key({
   variant?: "default" | "util" | "accent";
   wide?: boolean;
   space?: boolean;
+  /** Ocupa toda la celda del grid (teclado numérico). */
+  full?: boolean;
   disabled?: boolean;
 }) {
   const palette =
@@ -176,7 +181,13 @@ function Key({
       onClick={onPress}
       disabled={disabled}
       className={`flex items-center justify-center rounded-[0.7rem] border border-line text-[1.05rem] font-medium transition-transform duration-100 active:scale-90 disabled:opacity-30 ${palette} ${
-        space ? "flex-1 py-[0.75rem] text-[0.85rem]" : wide ? "w-[3.6rem] py-[0.75rem]" : "w-[2.5rem] py-[0.75rem]"
+        space
+          ? "flex-1 py-[0.75rem] text-[0.85rem]"
+          : full
+            ? "w-full py-[0.95rem] text-[1.15rem]"
+            : wide
+              ? "w-[3.6rem] py-[0.75rem]"
+              : "w-[2.5rem] py-[0.75rem]"
       }`}
     >
       {children}

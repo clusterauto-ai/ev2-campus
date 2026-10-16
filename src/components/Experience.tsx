@@ -39,12 +39,13 @@ const TRACKED: Step[] = [
 
 const STEP_LABELS = ["Tú", "Movilidad", "Hábitos", "Plan", "Resultado", "Contacto"];
 
-/** Sin actividad este tiempo, aparece "¿Sigues ahí?". */
-const IDLE_WARNING_MS = 90_000;
+/** Sin actividad este tiempo, aparece "¿Sigues ahí?". Holgado a
+ *  propósito: hay que dar espacio para leer y pensar (feedback oct 2026). */
+const IDLE_WARNING_MS = 180_000;
 /** Si tampoco responde al aviso, se reinicia para el siguiente. */
-const IDLE_GRACE_MS = 30_000;
+const IDLE_GRACE_MS = 45_000;
 /** Tras agradecer, la experiencia se reinicia sola. */
-const THANKS_TIMEOUT_MS = 25_000;
+const THANKS_TIMEOUT_MS = 35_000;
 
 export interface Profile {
   firstName: string;
