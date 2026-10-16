@@ -48,25 +48,66 @@ export function simulate(
   const { vehicle, financing, usage, habits } = config;
 
   const price = vehicle.price;
+  const isGracePlan = financing.planMode === "graceResidual";
+
   // La inicial y la retoma no pueden superar el precio: lo que sobre no
   // se financia (y tampoco se "devuelve" en la simulación).
   const tradeInValue = Math.max(0, Math.min(input.tradeInValue || 0, price));
+  // El plan Finandina exige una entrada mínima (inicial + retoma).
+  const minDown = isGracePlan
+    ? Math.max(0, (price * (financing.minDownPct ?? 0)) / 100 - tradeInValue)
+    : 0;
   const downPayment = Math.max(
-    0,
+    minDown,
     Math.min(input.downPayment || 0, price - tradeInValue),
   );
   const financed = Math.max(0, price - downPayment - tradeInValue);
   const monthlyRate = monthlyRateFromAnnual(financing.annualRate);
 
-  const loanPayment = frenchPayment(financed, monthlyRate, input.termMonths);
+  const graceMonths = isGracePlan ? (financing.graceMonths ?? 12) : 0;
+  const residualValue = isGracePlan
+    ? Math.round((price * (financing.residualPct ?? 0)) / 100)
+    : 0;
+
+  let loanPayment: number;
+  if (isGracePlan) {
+    // Plan Período de Gracia Finandina: durante la gracia solo se pagan
+    // seguros; los intereses se difieren y capitalizan. Luego se amortiza
+    // en (plazo − gracia) cuotas dejando viva la cuota residual.
+    // La fórmula exacta del banco vive en su simulador, así que se
+    // calibra contra la cifra oficial del folleto (officialBasePayment,
+    // caso: inicial mínima y sin retoma); las variantes escalan igual.
+    const amortMonths = Math.max(1, input.termMonths - graceMonths);
+    const graceFactor = Math.pow(1 + monthlyRate, graceMonths);
+    const residualDiscount = Math.pow(1 + monthlyRate, amortMonths);
+
+    const rawFor = (principal: number) =>
+      frenchPayment(
+        principal * graceFactor - residualValue / residualDiscount,
+        monthlyRate,
+        amortMonths,
+      );
+
+    const baseFinanced = price * (1 - (financing.minDownPct ?? 0) / 100);
+    const official = financing.officialBasePayment;
+    const calibration =
+      official && rawFor(baseFinanced) > 0 ? official / rawFor(baseFinanced) : 1;
+
+    loanPayment = rawFor(financed) * calibration;
+  } else {
+    loanPayment = frenchPayment(financed, monthlyRate, input.termMonths);
+  }
+
   const monthlyCommitment =
     loanPayment + financing.monthlyInsurance + financing.monthlyAdminFee;
 
-  // Plan Cuota Baja (Finandina): el primer año se pagan solo intereses
-  // y cargos fijos. Es informativo para la conversación: la cobertura
-  // se sigue midiendo contra la cuota plena.
-  const firstYearPayment =
-    financed * monthlyRate + financing.monthlyInsurance + financing.monthlyAdminFee;
+  // Lo que se paga al mes durante la gracia: solo seguros y cargos.
+  // (En el plan estándar equivale a primer año de solo intereses.)
+  const firstYearPayment = isGracePlan
+    ? financing.monthlyInsurance + financing.monthlyAdminFee
+    : financed * monthlyRate + financing.monthlyInsurance + financing.monthlyAdminFee;
+
+  const dailyPayment = loanPayment / 30;
 
   // ── Costo de moverse: electricidad vs gasolina ──────────────────
   const kwhPerKm = vehicle.rangeKm > 0 ? vehicle.batteryKwh / vehicle.rangeKm : 0;
@@ -164,8 +205,12 @@ export function simulate(
       ? Math.min(100, (studentCapacity / realMonthlyCost) * 100)
       : 100;
 
-  const totalPaid = loanPayment * input.termMonths + downPayment;
-  const totalInterest = Math.max(0, loanPayment * input.termMonths - financed);
+  const payingMonths = input.termMonths - graceMonths;
+  const totalPaid = loanPayment * payingMonths + residualValue + downPayment;
+  const totalInterest = Math.max(
+    0,
+    loanPayment * payingMonths + residualValue - financed,
+  );
 
   return {
     price,
@@ -178,6 +223,9 @@ export function simulate(
     loanPayment,
     monthlyCommitment,
     firstYearPayment,
+    dailyPayment,
+    residualValue,
+    graceMonths,
     energyCost,
     gasolineEquivalentCost,
     fuelSaving,

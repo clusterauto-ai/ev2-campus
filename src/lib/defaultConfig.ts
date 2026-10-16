@@ -21,18 +21,25 @@ export const DEFAULT_CONFIG: AppConfig = {
   },
 
   financing: {
-    // Propuesta "Plan Movilidad EV2" de Banco Finandina (oct 2026):
-    // tasa preferencial desde 1,33% M.V. (equivale a 17,18% E.A.),
-    // referencia agosto y sujeta a perfil; hasta 96 meses y hasta el
-    // 100% financiado sin cuota inicial obligatoria, según scoring.
+    // Plan DEFINITIVO Finandina para estudiantes EV2 (oct-nov 2026):
+    // "EV2 Recarga Total" — Período de Gracia 12 meses (solo seguros,
+    // intereses diferidos), plazo 84 meses, inicial desde 20%,
+    // residual 10%, tasa especial simulada 1,33% M.V. (clientes AA).
+    // Cifra oficial del banco: cuota mes 13-84 = $1.761.466,52.
     financierName: "Banco Finandina",
-    rateNote: "Tasa preferencial Finandina desde 1,33% M.V. según perfil",
-    offerFirstYearInterestOnly: true,
+    rateNote: "Tasa especial simulada 1,33% M.V. · clientes AA, sujeta a perfil",
+    planMode: "graceResidual",
+    planLabel: "EV2 Recarga Total · Período de Gracia 12 meses",
+    planVigency: "1 de octubre al 30 de noviembre de 2026",
+    graceMonths: 12,
+    residualPct: 10,
+    minDownPct: 20,
+    officialBasePayment: 1_761_466.52,
     annualRate: 17.18,
-    terms: [48, 60, 72, 84, 96],
-    defaultTerm: 96,
-    downPaymentOptions: [0, 10, 20, 30],
-    defaultDownPayment: 0,
+    terms: [84],
+    defaultTerm: 84,
+    downPaymentOptions: [20, 30, 40],
+    defaultDownPayment: 20,
     monthlyInsurance: 185_000,
     monthlyAdminFee: 0,
   },
@@ -152,6 +159,6 @@ export const DEFAULT_CONFIG: AppConfig = {
     closingMessage:
       "Un asesor Kia te contactará muy pronto con tu simulación lista.",
     legalNotice:
-      "Valores estimados con fines informativos; no constituyen oferta comercial ni aprobación de crédito. Financiación otorgada por Banco Finandina, sujeta a estudio, scoring y políticas vigentes. Tasas de referencia que pueden variar.",
+      "Valores estimados con fines informativos; no constituyen oferta ni aprobación de crédito. Financiación Banco Finandina sujeta a sus políticas: plan período de gracia 12 meses (los intereses causados se difieren y se pagan en las cuotas siguientes), inicial desde 20%, residual 10%, plazo hasta 84 meses, hasta perfil de riesgo C. La cuota no incluye primas de seguros, que se cobran desde el desembolso. Tasa especial simulada solo clientes AA; puede variar según perfil. Vigencia 1 oct – 30 nov 2026 o hasta cambio de política.",
   },
 };

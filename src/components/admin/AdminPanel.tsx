@@ -182,18 +182,12 @@ export function AdminPanel({
             <Grid>
               <TextField label="Financiera aliada" value={config.financing.financierName ?? ""} onChange={(financierName) => update({ financing: { ...config.financing, financierName } })} />
               <TextField label="Nota de tasa visible al usuario" value={config.financing.rateNote ?? ""} onChange={(rateNote) => update({ financing: { ...config.financing, rateNote } })} />
-              <label className="block text-xs font-medium text-fg-dim">
-                Plan Cuota Baja (1er año solo intereses)
-                <button
-                  type="button"
-                  onClick={() => update({ financing: { ...config.financing, offerFirstYearInterestOnly: !config.financing.offerFirstYearInterestOnly } })}
-                  data-selected={config.financing.offerFirstYearInterestOnly === true}
-                  className="chip mt-1.5 block px-4 py-2.5 text-sm"
-                  style={{ borderRadius: "0.8rem" }}
-                >
-                  {config.financing.offerFirstYearInterestOnly ? "Activo: se muestra en plan y resultado" : "Inactivo"}
-                </button>
-              </label>
+              <TextField label="Nombre del plan" value={config.financing.planLabel ?? ""} onChange={(planLabel) => update({ financing: { ...config.financing, planLabel } })} />
+              <TextField label="Vigencia del plan" value={config.financing.planVigency ?? ""} onChange={(planVigency) => update({ financing: { ...config.financing, planVigency } })} />
+              <NumberField label="Meses de gracia (solo seguros)" value={config.financing.graceMonths ?? 0} onChange={(graceMonths) => update({ financing: { ...config.financing, graceMonths } })} />
+              <NumberField label="Residual (% del precio)" value={config.financing.residualPct ?? 0} onChange={(residualPct) => update({ financing: { ...config.financing, residualPct } })} />
+              <NumberField label="Entrada mínima del plan (%)" value={config.financing.minDownPct ?? 0} onChange={(minDownPct) => update({ financing: { ...config.financing, minDownPct } })} />
+              <NumberField label="Cuota oficial caso base (COP)" value={config.financing.officialBasePayment ?? 0} step={0.01} onChange={(officialBasePayment) => update({ financing: { ...config.financing, officialBasePayment } })} />
               <NumberField label="Tasa efectiva anual (%)" value={config.financing.annualRate} step={0.01} onChange={(annualRate) => update({ financing: { ...config.financing, annualRate } })} />
               <NumberField label="Seguro todo riesgo mensual (COP)" value={config.financing.monthlyInsurance} onChange={(monthlyInsurance) => update({ financing: { ...config.financing, monthlyInsurance } })} />
               <NumberField label="Cuota de manejo mensual (COP)" value={config.financing.monthlyAdminFee} onChange={(monthlyAdminFee) => update({ financing: { ...config.financing, monthlyAdminFee } })} />

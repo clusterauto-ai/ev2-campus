@@ -43,6 +43,27 @@ export interface FinancingConfig {
   rateNote?: string;
   /** Si la financiera ofrece primer año pagando solo intereses (Plan Cuota Baja). */
   offerFirstYearInterestOnly?: boolean;
+
+  // ── Plan Período de Gracia (Finandina "EV2 Recarga Total") ─────
+  /** "graceResidual" activa el plan oficial: gracia + residual. */
+  planMode?: "standard" | "graceResidual";
+  /** Nombre comercial del plan, visible al usuario. */
+  planLabel?: string;
+  /** Vigencia visible (ej: "1 oct – 30 nov 2026"). */
+  planVigency?: string;
+  /** Meses de gracia donde solo se pagan seguros. */
+  graceMonths?: number;
+  /** Cuota residual al final, como % del precio. */
+  residualPct?: number;
+  /** % mínimo de entrada (inicial + retoma) exigido por el plan. */
+  minDownPct?: number;
+  /**
+   * Cuota oficial simulada por el banco para el caso base (inicial
+   * mínima, sin retoma). Calibra el motor para que el caso del folleto
+   * dé exactamente la cifra oficial y las variantes escalen coherentes.
+   */
+  officialBasePayment?: number;
+
   /** Tasa efectiva anual, en porcentaje. Ej: 18.37 */
   annualRate: number;
   /** Plazos ofrecidos, en meses. */
@@ -139,11 +160,17 @@ export interface SimulationResult {
   /** Cuota + seguro + cuota de manejo. */
   monthlyCommitment: number;
   /**
-   * Cuota del primer año con el Plan Cuota Baja de la financiera
-   * (solo intereses + seguro). Informativa: la cobertura y la brecha
-   * siempre se calculan sobre la cuota plena para no sobreprometer.
+   * Lo que se paga al mes durante el período inicial del plan:
+   * con gracia Finandina, solo los seguros. Informativo — la cobertura
+   * y la brecha siempre se calculan sobre la cuota plena.
    */
   firstYearPayment: number;
+  /** Cuota equivalente por día (gancho comercial del plan). */
+  dailyPayment: number;
+  /** Cuota residual al final del crédito, en pesos. */
+  residualValue: number;
+  /** Meses de gracia aplicados (0 si el plan es estándar). */
+  graceMonths: number;
 
   energyCost: number;
   gasolineEquivalentCost: number;

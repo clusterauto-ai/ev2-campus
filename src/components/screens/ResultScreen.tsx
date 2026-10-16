@@ -133,15 +133,15 @@ export function ResultScreen({
           </div>
         </div>
 
-        {config.financing.offerFirstYearInterestOnly && result.financed > 0 && (
+        {result.graceMonths > 0 && result.financed > 0 && (
           <p className="mt-[1rem] rounded-[0.9rem] bg-[rgba(0,168,252,.08)] px-[0.9rem] py-[0.7rem] text-[0.78rem] leading-[1.45] text-fg-dim">
-            Con el <span className="font-semibold text-[var(--accent-ice)]">Plan Cuota Baja</span>
-            {config.financing.financierName ? ` de ${config.financing.financierName}` : ""}, tu
-            primer año sería de{" "}
+            Y arrancas suave: con el período de gracia
+            {config.financing.financierName ? ` de ${config.financing.financierName}` : ""}, tus
+            primeros {result.graceMonths} meses pagas{" "}
             <span className="numeric font-semibold text-[var(--accent-ice)]">
               {formatCOP(result.firstYearPayment + result.energyCost)}
             </span>{" "}
-            al mes, todo incluido.
+            al mes (seguros + carga). La cuota llega en 2027.
           </p>
         )}
       </div>

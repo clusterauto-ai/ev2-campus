@@ -42,6 +42,7 @@ export function PlanScreen({
 }) {
   const { financing, vehicle } = config;
   const price = vehicle.price;
+  const isGrace = financing.planMode === "graceResidual";
 
   const downOptions = financing.downPaymentOptions.map((pct) => ({
     pct,
@@ -78,26 +79,42 @@ export function PlanScreen({
     >
       {/* Cuota en vivo */}
       <div className="panel mb-[1.4rem] p-[1.6rem] text-center" style={{ boxShadow: "var(--glow)" }}>
-        <p className="eyebrow">Tu cuota mensual sería</p>
-        <p className="numeric mt-[0.5rem] text-[3.4rem] font-light leading-none text-fg">
-          <AnimatedNumber value={result.monthlyCommitment} format={formatCOP} />
-        </p>
-        <p className="mt-[0.7rem] text-[0.8rem] leading-[1.45] text-fg-mute">
-          Financiando {formatCOP(result.financed)} a {input.termMonths} meses · incluye seguro
-          todo riesgo estimado ·{" "}
-          {financing.rateNote || `tasa ${financing.annualRate}% E.A.`}
-        </p>
-
-        {/* Plan Cuota Baja de la financiera: primer año solo intereses. */}
-        {financing.offerFirstYearInterestOnly && result.financed > 0 && (
-          <p className="mx-auto mt-[0.9rem] w-fit rounded-full border border-[rgba(0,204,252,.35)] bg-[rgba(0,168,252,.1)] px-[1.1rem] py-[0.5rem] text-[0.82rem] text-fg-dim">
-            Plan Cuota Baja{financing.financierName ? ` ${financing.financierName}` : ""}: tu
-            primer año pagarías{" "}
-            <span className="numeric font-semibold text-[var(--accent-ice)]">
-              {formatCOP(result.firstYearPayment)}
-            </span>
-            /mes
-          </p>
+        {isGrace ? (
+          <>
+            {/* Plan oficial Finandina: gracia 12 meses, luego la cuota. */}
+            <p className="eyebrow">Desde el mes {result.graceMonths + 1}, tu cuota sería</p>
+            <p className="numeric mt-[0.5rem] text-[3.4rem] font-light leading-none text-fg">
+              <AnimatedNumber value={result.loanPayment} format={formatCOP} />
+            </p>
+            <p className="numeric mt-[0.35rem] text-[0.95rem] font-semibold text-[var(--accent-ice)]">
+              ≈ {formatCOP(result.dailyPayment)} diarios
+            </p>
+            <p className="mx-auto mt-[0.9rem] w-fit rounded-full border border-[rgba(0,204,252,.35)] bg-[rgba(0,168,252,.1)] px-[1.1rem] py-[0.5rem] text-[0.82rem] text-fg-dim">
+              Tu primer año pagas <span className="font-semibold text-[var(--accent-ice)]">solo seguros</span>:{" "}
+              <span className="numeric font-semibold text-[var(--accent-ice)]">
+                {formatCOP(result.firstYearPayment)}
+              </span>
+              /mes
+            </p>
+            <p className="mt-[0.7rem] text-[0.8rem] leading-[1.45] text-fg-mute">
+              Financiando {formatCOP(result.financed)} · {result.graceMonths} meses de gracia +{" "}
+              {input.termMonths - result.graceMonths} cuotas · residual{" "}
+              {formatCOP(result.residualValue)} al final ·{" "}
+              {financing.rateNote || `tasa ${financing.annualRate}% E.A.`}
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="eyebrow">Tu cuota mensual sería</p>
+            <p className="numeric mt-[0.5rem] text-[3.4rem] font-light leading-none text-fg">
+              <AnimatedNumber value={result.monthlyCommitment} format={formatCOP} />
+            </p>
+            <p className="mt-[0.7rem] text-[0.8rem] leading-[1.45] text-fg-mute">
+              Financiando {formatCOP(result.financed)} a {input.termMonths} meses · incluye seguro
+              todo riesgo estimado ·{" "}
+              {financing.rateNote || `tasa ${financing.annualRate}% E.A.`}
+            </p>
+          </>
         )}
 
         {/* Curva "entrada vs crédito" del guideline (pág. 12). */}
@@ -114,7 +131,11 @@ export function PlanScreen({
         <Block
           number="1"
           title="¿Cuánto pondrían de inicial?"
-          hint={`${financing.financierName || "La financiera"} financia hasta el 100% — sin inicial obligatoria, según perfil`}
+          hint={
+            isGrace
+              ? `El plan pide desde ${financing.minDownPct ?? 20}% de entrada (inicial + retoma)`
+              : `${financing.financierName || "La financiera"} financia hasta el 100% — sin inicial obligatoria, según perfil`
+          }
           value={formatCOP(result.downPayment)}
         >
           <div className="grid grid-cols-5 gap-[0.45rem]">
@@ -240,20 +261,34 @@ export function PlanScreen({
             hint={`${formatCOP(result.financed)} a crédito`}
             value={`${(input.termMonths / 12).toFixed(0)} años`}
           >
-            <div className="grid grid-cols-4 gap-[0.5rem]">
-              {financing.terms.map((term) => (
-                <button
-                  key={term}
-                  type="button"
-                  onClick={() => onChange({ termMonths: term })}
-                  data-selected={input.termMonths === term}
-                  className="chip py-[0.95rem] text-center"
-                >
-                  <span className="numeric block text-[1.15rem] font-semibold">{term}</span>
-                  <span className="text-[0.68rem] text-fg-mute">meses</span>
-                </button>
-              ))}
-            </div>
+            {financing.terms.length === 1 ? (
+              // Plazo único del plan oficial: se informa, no se elige.
+              <div className="chip flex items-center justify-between px-[1.2rem] py-[1rem]" data-selected="true">
+                <span className="numeric text-[1.1rem] font-semibold">
+                  {financing.terms[0]} meses
+                </span>
+                {isGrace && (
+                  <span className="text-[0.76rem] text-fg-dim">
+                    {result.graceMonths} de gracia + {financing.terms[0] - result.graceMonths} cuotas
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 gap-[0.5rem]">
+                {financing.terms.map((term) => (
+                  <button
+                    key={term}
+                    type="button"
+                    onClick={() => onChange({ termMonths: term })}
+                    data-selected={input.termMonths === term}
+                    className="chip py-[0.95rem] text-center"
+                  >
+                    <span className="numeric block text-[1.15rem] font-semibold">{term}</span>
+                    <span className="text-[0.68rem] text-fg-mute">meses</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </Block>
         )}
 
@@ -289,8 +324,6 @@ export function PlanScreen({
         <div className="panel mt-[1.4rem] p-[1.4rem]">
           <div className="mb-[0.9rem] flex items-center justify-between gap-[0.8rem]">
             <div className="flex items-center gap-[0.7rem]">
-              {/* Logo oficial del banco aliado, sobre placa blanca para
-                  respetar su marca (es rojo) sin romper el tema oscuro. */}
               {/* Aplicación "Blanco" del brandbook Finandina (pág. 5):
                   logo monocromo blanco, integrado al fondo oscuro sin placa. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -300,21 +333,44 @@ export function PlanScreen({
                 className="h-[1.7rem] w-auto opacity-90"
                 style={{ filter: "brightness(0) invert(1)" }}
               />
-              <p className="eyebrow">Planes {financing.financierName}</p>
+              <p className="eyebrow">{financing.planLabel || `Planes ${financing.financierName}`}</p>
             </div>
             <p className="text-[0.7rem] text-fg-mute">según perfil y política vigente</p>
           </div>
           <div className="grid grid-cols-2 gap-[0.55rem] text-[0.78rem] leading-[1.4]">
-            {financing.offerFirstYearInterestOnly && (
-              <PlanCard
-                title="Cuota Baja"
-                body={`Primer año pagas solo intereses: ${formatCOP(result.firstYearPayment)}/mes`}
-              />
+            {isGrace ? (
+              <>
+                {/* Los 4 pilares del plan oficial "EV2 Recarga Total". */}
+                <PlanCard
+                  title={`Gracia ${result.graceMonths} meses`}
+                  body={`Arrancas pagando solo seguros: ${formatCOP(result.firstYearPayment)}/mes`}
+                />
+                <PlanCard
+                  title="Primera cuota en 2027"
+                  body={`Desde el mes ${result.graceMonths + 1}: ≈ ${formatCOP(result.dailyPayment)} diarios`}
+                />
+                <PlanCard
+                  title={`Residual ${financing.residualPct ?? 10}%`}
+                  body={`${formatCOP(result.residualValue)} al final del crédito`}
+                />
+                <PlanCard
+                  title="Tasa especial 1,33%"
+                  body="Clientes AA · aplica hasta perfil de riesgo C"
+                />
+              </>
+            ) : (
+              <>
+                <PlanCard title="Período de gracia" body="Hasta 12 meses pagando solo cargos fijos" />
+                <PlanCard title="Cuota extra 14/12" body="Cuota extra opcional en junio y diciembre" />
+                <PlanCard title="Sin historial crediticio" body="Financiación hasta el 70%, o más con codeudor familiar" />
+              </>
             )}
-            <PlanCard title="Período de gracia" body="Hasta 12 meses pagando solo cargos fijos" />
-            <PlanCard title="Cuota extra 14/12" body="Cuota extra opcional en junio y diciembre" />
-            <PlanCard title="Sin historial crediticio" body="Financiación hasta el 70%, o más con codeudor familiar" />
           </div>
+          {financing.planVigency && (
+            <p className="mt-[0.8rem] text-[0.7rem] text-fg-mute">
+              Vigencia: {financing.planVigency}
+            </p>
+          )}
 
           {/* Sello regulatorio que debe acompañar la marca del banco.
               El PNG es negro: se invierte para legibilidad en tema oscuro. */}
@@ -342,9 +398,35 @@ export function PlanScreen({
             )}
             <Row label="Monto a financiar" value={formatCOP(result.financed)} strong />
             <div className="my-[0.2rem] h-px bg-line" />
-            <Row label={`Cuota del crédito (${input.termMonths} meses)`} value={formatCOP(result.loanPayment)} />
-            <Row label="Seguro todo riesgo" value={formatCOP(financing.monthlyInsurance)} />
-            <Row label="Total mensual" value={formatCOP(result.monthlyCommitment)} strong accent />
+            {isGrace ? (
+              <>
+                <Row
+                  label={`Mes 1 a ${result.graceMonths} (gracia): solo seguros`}
+                  value={formatCOP(result.firstYearPayment)}
+                />
+                <Row
+                  label={`Mes ${result.graceMonths + 1} a ${input.termMonths}: cuota`}
+                  value={formatCOP(result.loanPayment)}
+                />
+                <Row label="Seguro todo riesgo (siempre)" value={formatCOP(financing.monthlyInsurance)} />
+                <Row
+                  label={`Residual al final (${financing.residualPct ?? 10}%)`}
+                  value={formatCOP(result.residualValue)}
+                />
+                <Row
+                  label="Total mensual desde la cuota"
+                  value={formatCOP(result.monthlyCommitment)}
+                  strong
+                  accent
+                />
+              </>
+            ) : (
+              <>
+                <Row label={`Cuota del crédito (${input.termMonths} meses)`} value={formatCOP(result.loanPayment)} />
+                <Row label="Seguro todo riesgo" value={formatCOP(financing.monthlyInsurance)} />
+                <Row label="Total mensual" value={formatCOP(result.monthlyCommitment)} strong accent />
+              </>
+            )}
           </div>
         </div>
       )}
