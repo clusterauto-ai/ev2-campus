@@ -100,8 +100,26 @@ export function OnScreenKeyboard({
         {ROWS_TEXT.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-[0.35rem]">
             {rowIndex === 2 && (
-              <Key onPress={() => setShift((s) => !s)} variant="util" wide>
-                {shift ? "⇧" : "⇧"}
+              // Ícono SVG (la fuente Kia no trae el glifo ⇧) y color de
+              // acento cuando las mayúsculas están activas.
+              <Key
+                onPress={() => setShift((s) => !s)}
+                variant={shift ? "accent" : "util"}
+                wide
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.9"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ width: "1.15rem", height: "1.15rem" }}
+                  aria-label="Mayúsculas"
+                >
+                  <path d="M12 4 5.5 11H9v5h6v-5h3.5L12 4Z" />
+                  <path d="M9 19.5h6" />
+                </svg>
               </Key>
             )}
             {row.map((char) => (

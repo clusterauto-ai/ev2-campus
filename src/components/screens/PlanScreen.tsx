@@ -323,16 +323,25 @@ export function PlanScreen({
       {!editing && financing.financierName && (
         <div className="panel mt-[1.4rem] p-[1.4rem]">
           <div className="mb-[0.9rem] flex items-center justify-between gap-[0.8rem]">
-            <div className="flex items-center gap-[0.7rem]">
-              {/* Aplicación "Blanco" del brandbook Finandina (pág. 5):
-                  logo monocromo blanco, integrado al fondo oscuro sin placa. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/finandina-h.webp"
-                alt="Banco Finandina - Banca libre"
-                className="h-[1.7rem] w-auto opacity-90"
-                style={{ filter: "brightness(0) invert(1)" }}
-              />
+            <div className="flex items-center gap-[0.9rem]">
+              {/* Lockup de alianza del folleto oficial: placa blanca con
+                  Kia (negro) | Finandina (rojo original), como en el PDF. */}
+              <span className="flex items-center gap-[0.8rem] rounded-[0.8rem] bg-white px-[1rem] py-[0.55rem]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/kia-logo.png"
+                  alt="Kia"
+                  className="h-[1.3rem] w-auto"
+                  style={{ filter: "brightness(0)" }}
+                />
+                <span className="h-[1.8rem] w-px bg-[#d8d8d8]" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/finandina-h.webp"
+                  alt="Banco Finandina"
+                  className="h-[1.9rem] w-auto"
+                />
+              </span>
               <p className="eyebrow">{financing.planLabel || `Planes ${financing.financierName}`}</p>
             </div>
             <p className="text-[0.7rem] text-fg-mute">según perfil y política vigente</p>

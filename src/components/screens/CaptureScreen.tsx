@@ -155,42 +155,42 @@ export function CaptureScreen({
         />
       )}
 
-      {/* Ciudad y concesionario (valores del formulario SGC). */}
+      {/* Concesionario (lista oficial de kia.com.co, toda la red).
+          Esta versión es solo Bogotá: si hubiera más ciudades, vuelven
+          los chips de ciudad; con una, se va directo a las sedes. */}
       {active === null && (
         <div className="mt-[1.4rem]">
           <p className="mb-[0.5rem] text-[0.85rem] font-medium text-fg-dim">
             ¿En qué concesionario te gustaría que te atiendan?
           </p>
-          <div className="flex gap-[0.45rem]">
-            {CITIES.map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => set({ city: c, dealership: DEALERSHIPS[c].length === 1 ? DEALERSHIPS[c][0] : "" })}
-                data-selected={contact.city === c}
-                className="chip flex-1 py-[0.75rem] text-center text-[0.85rem] font-semibold"
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-          {/* Siempre visibles, aunque la ciudad tenga una sola sede:
-              así se confirma visualmente cuál quedó elegida. */}
-          {contact.city && DEALERSHIPS[contact.city]?.length > 0 && (
-            <div className="mt-[0.6rem] flex flex-wrap gap-[0.45rem]">
-              {DEALERSHIPS[contact.city].map((d) => (
+          {CITIES.length > 1 && (
+            <div className="mb-[0.6rem] flex gap-[0.45rem]">
+              {CITIES.map((c) => (
                 <button
-                  key={d}
+                  key={c}
                   type="button"
-                  onClick={() => set({ dealership: d })}
-                  data-selected={contact.dealership === d}
-                  className="chip px-[0.9rem] py-[0.7rem] text-[0.8rem] font-medium"
+                  onClick={() => set({ city: c, dealership: "" })}
+                  data-selected={contact.city === c}
+                  className="chip flex-1 py-[0.75rem] text-center text-[0.85rem] font-semibold"
                 >
-                  {d.replace("Metrokia - ", "")}
+                  {c}
                 </button>
               ))}
             </div>
           )}
+          <div className="flex flex-wrap gap-[0.45rem]">
+            {DEALERSHIPS[CITIES.length === 1 ? CITIES[0] : contact.city]?.map((d) => (
+              <button
+                key={d}
+                type="button"
+                onClick={() => set({ city: CITIES.length === 1 ? CITIES[0] : contact.city, dealership: d })}
+                data-selected={contact.dealership === d}
+                className="chip px-[0.9rem] py-[0.7rem] text-[0.8rem] font-medium"
+              >
+                {d}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

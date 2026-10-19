@@ -122,9 +122,10 @@ export function TransportScreen({
         </div>
       )}
 
-      {/* Comparación de costo de energía. Es el dato que más sorprende. */}
+      {/* Comparación de costo de energía. Es el dato que más sorprende.
+          Margen fijo: con mt-auto quedaba pegado a "Otro valor" en móvil. */}
       {!editing && (
-      <div className="panel mt-auto p-[1.5rem]">
+      <div className="panel mb-[0.5rem] mt-[1.4rem] p-[1.5rem]">
         <p className="eyebrow mb-[1.1rem]">Mover el EV2 {usage.monthlyKm} km al mes</p>
 
         <div className="flex flex-col gap-[1rem]">

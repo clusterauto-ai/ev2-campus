@@ -66,13 +66,15 @@ export function ThanksScreen({
           {config.copy.closingMessage}
         </p>
 
+        {/* Mismo número del comparativo del paso anterior (cuota +
+            seguro + carga): las tres cifras deben cuadrar entre sí. */}
         <div className="panel mx-auto mt-[2.6rem] w-full max-w-[30rem] p-[1.7rem]">
           <p className="eyebrow">Para contarlo en casa</p>
           <p className="numeric mt-[0.6rem] text-[2.6rem] font-light leading-none text-fg">
-            {formatCOP(result.monthlyCommitment)}
+            {formatCOP(result.realMonthlyCost)}
           </p>
           <p className="mt-[0.4rem] text-[0.82rem] text-fg-mute">
-            de cuota · tú ya pones {formatCOP(result.studentCapacity)}
+            tener tu EV2 al mes · tú ya pones {formatCOP(result.studentCapacity)}
             {result.familyGap > 0 && ` · faltarían ${formatCOP(result.familyGap)}`}
           </p>
         </div>

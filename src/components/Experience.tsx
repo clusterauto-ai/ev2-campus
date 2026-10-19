@@ -186,7 +186,9 @@ export function Experience({ config }: { config: AppConfig }) {
   const trackedIndex = TRACKED.indexOf(step);
 
   return (
-    <main className="kiosk relative flex min-h-screen flex-col overflow-hidden bg-ink-950">
+    // Sin overflow-hidden aquí: rompería el footer sticky de las
+    // pantallas (un ancestro con overflow lo desancla del viewport).
+    <main className="kiosk relative flex min-h-screen flex-col overflow-x-clip bg-ink-950">
       <Ambient intensity={step === "attract" ? 1.25 : 0.75} />
 
       {step !== "attract" && (
