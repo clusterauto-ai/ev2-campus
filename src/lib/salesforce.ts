@@ -95,21 +95,6 @@ function customFieldMap(): Partial<Record<LeadFieldKey, string>> {
   }
 }
 
-/** Resumen legible que siempre viaja en Description, exista o no mapeo. */
-function description(lead: Lead): string {
-  const v = fieldValues(lead);
-  return [
-    `EV2 Campus · ${lead.eventName} · tótem ${lead.totemId}`,
-    `Documento: ${lead.documentType} ${lead.documentNumber} · Concesionario: ${lead.dealership} (${lead.city})`,
-    `Universidad: ${lead.university} · ${lead.program} · semestre ${lead.semester} · ${lead.age ?? "?"} años`,
-    `Cuota simulada: $${v.monthlyCommitment} · plazo ${v.termMonths} m · inicial $${v.downPayment} · retoma $${v.tradeInValue} · financia $${v.financed}`,
-    `Aporte estudiante: $${v.studentCapacity} · brecha familiar: $${v.familyGap} · cubre ${v.coveragePct}%`,
-    `Apoyo para el crédito: ${lead.simulation.creditSupport || "no indicó"}`,
-    `Score ${v.score} (${v.tier}) · autoriza datos: ${lead.dataConsent ? "sí" : "no"} · comercial: ${lead.commercialConsent ? "sí" : "no"} · mercadeo: ${lead.marketingConsent ? "sí" : "no"}`,
-    `Id interno: ${lead.id}`,
-  ].join("\n");
-}
-
 function splitName(fullName: string): { first: string; last: string } {
   const parts = fullName.trim().split(/\s+/);
   if (parts.length === 1) return { first: "", last: parts[0] };
@@ -183,7 +168,6 @@ async function pushViaRest(lead: Lead): Promise<SalesforceResult> {
     Company: lead.university || "Estudiante",
     LeadSource: process.env.SF_LEAD_SOURCE || "EV2 Campus",
     Rating: rating(lead.tier),
-    Description: description(lead),
   };
 
   // Solo enviamos campos personalizados que la org haya declarado.
@@ -237,7 +221,6 @@ async function pushViaWebToLead(lead: Lead): Promise<SalesforceResult> {
     company: lead.university || "Estudiante",
     lead_source: process.env.SF_LEAD_SOURCE || "EV2 Campus",
     rating: rating(lead.tier),
-    description: description(lead),
   });
 
   // En Web-to-Lead los campos personalizados van por su Id (00N...).

@@ -50,13 +50,13 @@ Navegador → API EV2 Campus (servidor Netlify) → Firestore (persistencia)
   "Country": "Colombia",
   "Company": "Universidad Nacional",
   "LeadSource": "EV2 Campus",
-  "Rating": "Hot",
-  "Description": "EV2 Campus · evento · tótem | Documento | Concesionario | Universidad/semestre | Cuota simulada, inicial, retoma, financiado | Aporte y brecha | Score y autorizaciones | Id interno"
+  "Rating": "Hot"
 }
 ```
 
 - `LastName` y `Company` (obligatorios estándar) siempre van con valor; `Company` = universidad o "Estudiante".
 - `Rating` llega como Hot / Warm / Cold según el score comercial (0-100) calculado por la app.
+- No se envía `Description`: los datos de la simulación viajan únicamente como campos estructurados vía `SF_FIELD_MAP` (secciones 5 y 6).
 
 ## 5. Datos disponibles para mapear
 
