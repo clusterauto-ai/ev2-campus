@@ -38,6 +38,10 @@ export type LeadFieldKey =
   | "marketingConsent"
   | "tradeInValue"
   | "financed"
+  | "documentType"
+  | "documentNumber"
+  | "dealership"
+  | "creditSupport"
   | "leadId";
 
 export function isSalesforceConfigured(): boolean {
@@ -71,6 +75,10 @@ function fieldValues(lead: Lead): Record<LeadFieldKey, string | number | boolean
     marketingConsent: lead.marketingConsent,
     tradeInValue: Math.round(lead.result.tradeInValue ?? 0),
     financed: Math.round(lead.result.financed ?? 0),
+    documentType: lead.documentType ?? "",
+    documentNumber: lead.documentNumber ?? "",
+    dealership: lead.dealership ?? "",
+    creditSupport: lead.simulation.creditSupport ?? "",
     leadId: lead.id,
   };
 }
