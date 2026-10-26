@@ -298,8 +298,11 @@ function LeadsTab({ leads, onRefresh }: { leads: Lead[]; onRefresh: () => void }
           <button onClick={onRefresh} className="btn btn-ghost px-4 py-2 text-xs">
             Actualizar
           </button>
-          <a href="/api/leads/export" className="btn btn-primary px-4 py-2 text-xs">
-            Exportar CSV
+          <a href="/api/leads/export" className="btn btn-ghost px-4 py-2 text-xs">
+            CSV completo
+          </a>
+          <a href="/api/leads/export?format=sgc" className="btn btn-primary px-4 py-2 text-xs">
+            CSV para SGC
           </a>
         </div>
       </div>

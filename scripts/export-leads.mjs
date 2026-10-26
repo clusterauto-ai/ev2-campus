@@ -1,0 +1,31 @@
+// Exporta todos los leads de Firestore a un JSON (para transformaciones
+// externas, p. ej. el formato BISS de carga a SGC).
+// node scripts/export-leads.mjs salida.json
+import { readFileSync, writeFileSync } from "node:fs";
+import { initializeApp, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+
+const envText = readFileSync(new URL("../.env.local", import.meta.url), "utf8");
+const env = Object.fromEntries(
+  envText
+    .split("\n")
+    .filter((l) => l.includes("="))
+    .map((l) => {
+      const i = l.indexOf("=");
+      return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, "")];
+    }),
+);
+
+initializeApp({
+  credential: cert({
+    projectId: env.FIREBASE_PROJECT_ID,
+    clientEmail: env.FIREBASE_CLIENT_EMAIL,
+    privateKey: env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+  }),
+});
+
+const out = process.argv[2] || "data/leads-export.json";
+const snapshot = await getFirestore().collection("leads").orderBy("createdAt", "desc").get();
+const leads = snapshot.docs.map((d) => d.data());
+writeFileSync(out, JSON.stringify(leads, null, 1), "utf8");
+console.log(`Exportados ${leads.length} leads a ${out}`);

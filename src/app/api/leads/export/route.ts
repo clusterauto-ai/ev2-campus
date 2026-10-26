@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { listLeads } from "@/lib/store";
 import { isAuthenticated } from "@/lib/auth";
+import { BISS_COLUMNS, bissRow } from "@/lib/biss";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -49,12 +50,26 @@ function csvCell(value: unknown): string {
   return `"${text.replace(/"/g, '""')}"`;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   if (!(await isAuthenticated())) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
   const leads = await listLeads(5000);
+  const stamp = new Date().toISOString().slice(0, 10);
+
+  // ?format=sgc → el CSV de carga al SGC (formato BISS), con EMPRESA y
+  // AGENCIA homologadas según el diccionario de transformación.
+  if (new URL(request.url).searchParams.get("format") === "sgc") {
+    const sgcRows = leads.map((lead) => bissRow(lead).map(csvCell).join(";"));
+    const sgcCsv = `﻿${BISS_COLUMNS.map(csvCell).join(";")}\n${sgcRows.join("\n")}`;
+    return new NextResponse(sgcCsv, {
+      headers: {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": `attachment; filename="leads-ev2-sgc-${stamp}.csv"`,
+      },
+    });
+  }
 
   const rows = leads.map((lead) =>
     [
@@ -98,7 +113,6 @@ export async function GET() {
 
   // BOM + separador ';' para que Excel en español lo abra en columnas.
   const csv = `﻿${COLUMNS.map(csvCell).join(";")}\n${rows.join("\n")}`;
-  const stamp = new Date().toISOString().slice(0, 10);
 
   return new NextResponse(csv, {
     headers: {
