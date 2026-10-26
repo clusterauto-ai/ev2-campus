@@ -85,6 +85,6 @@ export function bissRow(lead: Lead): (string | number)[] {
     "NATURAL",
     sgc.empresa,
     "",
-    "EV2 Campus",
+    "Middleware Kia",
   ];
 }
